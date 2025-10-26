@@ -1,0 +1,178 @@
+<div class="container user-container">
+  <aside class="sidebar">
+    <img src="img/uleam_logo.png" alt="Logo ULEAM">
+    <nav class="nav-menu">
+      <button 
+        [class.active]="currentView === 'myFiles'"
+        (click)="setView('myFiles')">
+        <mat-icon>folder</mat-icon> Mis archivos
+      </button>
+      <button 
+        [class.active]="currentView === 'receivedFiles'"
+        (click)="setView('receivedFiles'); markDocumentsAsRead()">
+        <mat-icon>inbox</mat-icon> Archivos recibidos
+      </button>
+      <button 
+        [class.active]="currentView === 'myDrive'"
+        (click)="setView('myDrive')">
+        <mat-icon>storage</mat-icon> Mi unidad
+      </button>
+      <button 
+        [class.active]="currentView === 'uploadForm'"
+        (click)="setView('uploadForm')">
+        <mat-icon>upload</mat-icon> Subir archivo
+      </button>
+    </nav>
+    <button (click)="logout()" class="secondary">
+      <mat-icon>logout</mat-icon> Cerrar Sesión
+    </button>
+  </aside>
+
+  <main class="main-content">
+    <header class="main-header">
+      <h1>{{ getViewTitle() }}</h1>
+      <div class="header-actions" *ngIf="!showUploadForm">
+        <input 
+          type="search"
+          placeholder="Buscar documentos..."
+          [value]="searchTerm"
+          (input)="onSearch($event)">
+        <button 
+          (click)="toggleTagsFilter()"
+          class="secondary"
+          [class.active-filter]="selectedTags.length > 0">
+          <mat-icon>filter_list</mat-icon>
+          {{ selectedTags.length > 0 ? 'Filtro (' + selectedTags.length + ')' : 'Filtro' }}
+        </button>
+        <span 
+          *ngIf="newdocumentsCount > 0"
+          class="notification-badge">
+          {{ newdocumentsCount }} Nuevos
+        </span>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <section class="content-area" *ngIf="!showUploadForm">
+      <div class="document-grid-view" *ngIf="filteredDocuments.length > 0">
+        <div 
+          *ngFor="let doc of filteredDocuments"
+          class="document-icon-item file-item"
+          (click)="openDocument(doc)"
+          (contextmenu)="onDocumentRightClick($event, doc)">
+          <div class="item-icon-wrapper">
+            <mat-icon>{{ getFileIcon(doc.fileType) }}</mat-icon>
+          </div>
+          <span class="document-name">{{ doc.fileName }}</span>
+        </div>
+      </div>
+      <p *ngIf="filteredDocuments.length === 0" class="empty-message">
+        No se encontraron documentos con los filtros aplicados.
+      </p>
+    </section>
+
+    <!-- Upload Form -->
+    <div class="upload-form-container" *ngIf="showUploadForm">
+      <h2>Subir Nuevo Documento</h2>
+      <form [formGroup]="uploadForm" (ngSubmit)="onUploadSubmit()">
+        <div class="form-group">
+          <label for="numero">Número de Documento:</label>
+          <input type="text" id="numero" formControlName="numero" required>
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo de Documento:</label>
+          <input type="text" id="tipo" formControlName="tipo" required>
+        </div>
+        <div class="form-group">
+          <label for="asunto">Asunto:</label>
+          <input type="text" id="asunto" formControlName="asunto" required>
+        </div>
+        <div class="form-group">
+          <label for="paraQuienEsEmail">Para Quién Es (Email ULEAM):</label>
+          <input 
+            type="email"
+            id="paraQuienEsEmail"
+            formControlName="paraQuienEsEmail"
+            placeholder="e-XXXXXXXXXX-nombre@live.uleam.edu.ec"
+            (input)="onEmailInput($event)"
+            required>
+          <ul class="autocomplete-list" *ngIf="showAutocomplete">
+            <li (click)="selectUser(null)">Todos</li>
+            <li 
+              *ngFor="let user of autocompleteUsers"
+              (click)="selectUser(user)">
+              {{ user.nombres }} {{ user.apellidos }} ({{ user.email }})
+            </li>
+          </ul>
+        </div>
+        <div class="form-group">
+          <label for="file">Seleccionar Archivo:</label>
+          <input type="file" id="file" (change)="onFileSelected($event)" required>
+        </div>
+        <div class="form-group">
+          <label for="etiquetas">Etiquetas (separadas por comas):</label>
+          <input 
+            type="text"
+            id="etiquetas"
+            formControlName="etiquetas"
+            placeholder="Ej: informe, tesis, acta">
+        </div>
+        <button type="submit" class="primary" [disabled]="uploadForm.invalid">
+          Subir Documento
+        </button>
+        <div 
+          *ngIf="message"
+          class="message"
+          [ngClass]="messageType">
+          {{ message }}
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<!-- Tags Filter Panel -->
+<div class="tags-filter-panel" *ngIf="showTagsFilter" (click)="showTagsFilter = false">
+  <div class="filter-content" (click)="$event.stopPropagation()">
+    <div class="filter-header">
+      <h3>Filtrar por Etiquetas</h3>
+      <span class="close-filter" (click)="showTagsFilter = false">&times;</span>
+    </div>
+    <div class="tags-container">
+      <div 
+        *ngFor="let tag of allTags"
+        class="tag-item"
+        [class.selected]="selectedTags.includes(tag)"
+        (click)="toggleTag(tag)">
+        <input 
+          type="checkbox"
+          [checked]="selectedTags.includes(tag)"
+          (click)="$event.stopPropagation()">
+        <label>{{ tag }}</label>
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button (click)="applyFilters(); showTagsFilter = false" class="primary">
+        Aplicar Filtro
+      </button>
+      <button (click)="clearFilters(); showTagsFilter = false" class="secondary">
+        Limpiar Filtro
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Document Modal -->
+<app-document-model
+  [isVisible]="showDocumentModal"
+  [document]="selectedDocument"
+  (closeModal)="showDocumentModal = false">
+</app-document-model>
+
+<!-- Context Menu -->
+<app-context-menu
+  [isVisible]="showContextMenu"
+  [position]="contextMenuPosition"
+  [actions]="contextMenuActions"
+  (actionSelected)="onContextMenuAction($event)">
+</app-context-menu>

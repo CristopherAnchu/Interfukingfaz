@@ -1,0 +1,32 @@
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <img src="img/uleam_logo.png" alt="logo">
+            <h1>Inicio de sesión</h1>
+        </div>
+
+        <form class="form-group" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            
+            <input
+            type="email"
+            id="email"
+            formControlName="email"
+            placeholder="Correo electrónico" 
+            required>
+
+            <input 
+            type="password"
+            id="password"
+            formControlName="password"
+            placeholder="Contraseña"
+            required>
+
+            <button type="submit" [disabled]="loginForm.invalid">Iniciar sesión</button>
+        </form>
+
+        <div class="form-message" *ngIf="message" [ngClass]="messageType" >{{message}}</div>
+
+        <a href="#">¿olvido su contraseña?</a>
+
+    </div>
+</body>

@@ -1,0 +1,9 @@
+[build]
+# base = "proyecto_GB_AG"
+  command = "ng build"
+  publish = "dist/proyecto_GB_AG/browser"
+
+  [[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

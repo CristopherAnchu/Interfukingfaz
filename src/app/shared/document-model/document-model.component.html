@@ -1,0 +1,26 @@
+<div class="modal" [style.display]="isVisible ? 'block' : 'none'" (click)="onBackdropClick($event)">
+
+      <div class="modal-content" (click)="$event.stopPropagation()">
+
+        <span class="close-button" (click)="close()">&times;</span>
+
+        <h3>Detalles del Documento</h3>
+
+        <div *ngIf="document">
+
+          <p><strong>ID:</strong> {{ document.id }}</p>
+          <p><strong>Fecha de Subida:</strong> {{ document.fechaSubida }}</p>
+          <p><strong>Número de Documento:</strong> {{ document.numero }}</p>
+          <p><strong>Tipo de Documento:</strong> {{ document.tipo }}</p>
+          <p><strong>Asunto:</strong> {{ document.asunto }}</p>
+          <p><strong>Quien:</strong> {{ document.quienSube }}</p>
+          <p><strong>Para:</strong> {{ document.paraQuienEs }}</p>
+          <p><strong>Nombre del Archivo:</strong> {{ document.fileName }}</p>
+          <p><strong>Tipo de Archivo:</strong> {{ document.fileType }}</p>
+          <p><strong>Etiquetas:</strong> {{ document.etiquetas || 'N/A' }}</p>
+          
+        </div>
+
+    </div>
+
+</div>

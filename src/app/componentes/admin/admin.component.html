@@ -1,0 +1,109 @@
+<div class="admin-container">
+    <header class="admin-header">
+        <img src="img/uleam_logo.png" alt="logo">
+        <h1>Panel de Administración</h1>
+        <p>Bienvenido <span>{{ currentUser?.nombre }} {{ currentUser?.apellido }}</span></p>
+        <button (click)="logout()" class="logout-button"> Cerrar sesión </button>
+    </header>
+
+    <section class="add-user-section">
+
+        <h2>Añadir Usuario</h2>
+
+        <form [formGroup]="addUserForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group">
+                <label for="nombres">Nombres:</label>
+                <input type="text" id="nombres" formControlName="nombres" placeholder="Nombres" required>
+            </div>
+
+            <div class="form-group">
+                <label for="apellidos">Apellidos:</label>
+                <input type="text" id="apellidos" formControlName="apellidos" placeholder="Apellidos" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cedula">Número de Cédula:</label>
+                <input type="text" id="cedula" formControlName="cedula" placeholder="10 dígitos" maxlength="10" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email ULEAM:</label>
+                <input type="email" id="email" formControlName="email" placeholder="eXXXXXXXXXXnombre@live.uleam.edu.ec" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" formControlName="password" required>
+            </div>
+
+            <button type="submit" class="primary" [disabled]="addUserForm.invalid">Agregar Usuario</button>
+        </form>
+
+        <div 
+            *ngIf="message" 
+            class="message"
+            [ngClass]="messageType">
+            {{message}}
+        </div>
+
+    </section>
+
+    <section class="user-management-section">
+        <h2>Gestión de Usuarios</h2>
+        
+        <div class="search-bar">
+            <input type="search"
+            placeholder="Buscar usuarios..."
+            (input)="onsearch($event)">
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+
+                    <tr>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Cédula</th>
+                        <th>Email</th>
+                        <th>Edad</th>
+                        <th>Acciones</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr *ngFor="let user of filteredUsers">
+
+                        <td> {{ user.nombres }} </td>
+                        <td> {{ user.apellidos }} </td>
+                        <td> {{user.cedula}} </td>
+                        <td> {{ user.email }} </td>
+                        <td> {{ CalculateAge(user.fechaNacimiento) }} años</td>
+                        <td>
+                            <button class="primary" (click)="EditUser(user)">Editar</button>
+                            <button class="danger" (click)="DeleteUser(user)">Eliminar</button>
+                        </td>
+
+                    </tr>
+
+                    <tr *ngIf="filteredUsers.length===0">
+                        <td colspan="6" style="text-align: center;">No se encontraron usuarios.</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
