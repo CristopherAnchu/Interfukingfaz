@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
+
 export class LoginComponent {
   loginForm: FormGroup;
   message = "";
@@ -48,7 +49,7 @@ export class LoginComponent {
           if (result.user!.isAdmin){
             this.router.navigate(['/admin'])
           }else{
-            this.router.navigate(['/home'])
+            this.router.navigate(['/feed'])
           }
         }, 500)
       } else {
