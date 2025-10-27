@@ -1,0 +1,277 @@
+<div class="feed-container">
+  <!-- Header -->
+  <header class="feed-header">
+    <div class="header-left">
+      <img src="img/uleam_logo.png" alt="Logo ULEAM" class="logo">
+      <h1>ULEAM Social</h1>
+    </div>
+    <div class="header-center">
+      <input 
+        type="search"
+        placeholder="Buscar..."
+        [value]="searchTerm"
+        (input)="onSearch($event)"
+        class="search-input">
+    </div>
+    <div class="header-right">
+      <button (click)="viewProfile()" class="icon-btn" title="Ver mi perfil">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <button (click)="logout()" class="icon-btn" title="Cerrar sesión">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="feed-nav">
+    <button 
+      [class.active]="activeTab === 'feed'"
+      (click)="setActiveTab('feed')">
+      <mat-icon>dynamic_feed</mat-icon>
+      Feed
+    </button>
+    <button 
+      [class.active]="activeTab === 'projects'"
+      (click)="setActiveTab('projects')">
+      <mat-icon>work</mat-icon>
+      Proyectos
+    </button>
+    <button 
+      [class.active]="activeTab === 'users'"
+      (click)="setActiveTab('users')">
+      <mat-icon>people</mat-icon>
+      Usuarios
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="feed-main">
+    <!-- Sidebar -->
+    <aside class="feed-sidebar">
+      <div class="user-card">
+        <div class="user-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <h3>{{ currentUser?.nombre }} {{ currentUser?.apellido }}</h3>
+        <p class="user-email">{{ currentUser?.email }}</p>
+        <button (click)="viewProfile()" class="btn-secondary">Ver Perfil</button>
+      </div>
+
+      <div class="quick-actions">
+        <h4>Acciones Rápidas</h4>
+        <button (click)="openCreateProjectModal()" class="btn-primary">
+          <mat-icon>add</mat-icon>
+          Crear Proyecto
+        </button>
+        <button (click)="openCreatePostModal()" class="btn-secondary">
+          <mat-icon>post_add</mat-icon>
+          Nueva Publicación
+        </button>
+      </div>
+    </aside>
+
+    <!-- Content Area -->
+    <section class="feed-content">
+      <!-- Feed Tab -->
+      <div *ngIf="activeTab === 'feed'" class="feed-posts">
+        <div *ngIf="posts.length === 0" class="empty-state">
+          <mat-icon>dynamic_feed</mat-icon>
+          <p>No hay publicaciones aún</p>
+        </div>
+
+        <div *ngFor="let post of posts" class="post-card">
+          <div class="post-header">
+            <div class="post-author">
+              <mat-icon class="author-avatar">account_circle</mat-icon>
+              <div>
+                <h4>{{ post.autorNombre }}</h4>
+                <p class="post-meta">
+                  {{ getTimeSince(post.fechaPublicacion) }} · 
+                  <span class="project-tag">{{ getProjectName(post.projectId) }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="post-content">
+            <p>{{ post.contenido }}</p>
+            
+            <!-- Documento adjunto -->
+            <div *ngIf="post.documentId && getDocument(post.documentId)" class="post-document">
+              <div class="document-preview">
+                <mat-icon class="doc-icon">{{ getFileIcon(getDocument(post.documentId)!.fileType) }}</mat-icon>
+                <div class="doc-info">
+                  <h5>{{ getDocument(post.documentId)!.fileName }}</h5>
+                  <p>{{ getDocument(post.documentId)!.asunto }}</p>
+                </div>
+                <button (click)="downloadDocument(post.documentId!)" class="download-btn">
+                  <mat-icon>download</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="post-actions">
+            <button 
+              (click)="toggleLike(post)"
+              [class.liked]="hasLiked(post)"
+              class="action-btn">
+              <mat-icon>{{ hasLiked(post) ? 'favorite' : 'favorite_border' }}</mat-icon>
+              {{ post.likes.length }}
+            </button>
+            <button (click)="toggleCommentBox(post.id)" class="action-btn">
+              <mat-icon>comment</mat-icon>
+              {{ post.comentarios.length }}
+            </button>
+          </div>
+
+          <!-- Comentarios -->
+          <div *ngIf="post.comentarios.length > 0" class="comments-section">
+            <div *ngFor="let comment of post.comentarios" class="comment-item">
+              <mat-icon class="comment-avatar">account_circle</mat-icon>
+              <div class="comment-content">
+                <h5>{{ comment.autorNombre }}</h5>
+                <p>{{ comment.contenido }}</p>
+                <span class="comment-time">{{ getTimeSince(comment.fechaPublicacion) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caja de comentario -->
+          <div *ngIf="showCommentBox[post.id]" class="comment-box">
+            <form [formGroup]="commentForm" (ngSubmit)="addComment(post)">
+              <input 
+                type="text" 
+                formControlName="contenido" 
+                placeholder="Escribe un comentario..."
+                class="comment-input">
+              <button type="submit" [disabled]="commentForm.invalid" class="comment-submit">
+                <mat-icon>send</mat-icon>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Projects Tab -->
+      <div *ngIf="activeTab === 'projects'" class="projects-grid">
+        <div *ngIf="projects.length === 0" class="empty-state">
+          <mat-icon>work</mat-icon>
+          <p>No hay proyectos disponibles</p>
+        </div>
+
+        <div *ngFor="let project of projects" class="project-card">
+          <div class="project-header">
+            <h3>{{ project.nombre }}</h3>
+            <span class="project-status" [class]="project.estado">{{ project.estado }}</span>
+          </div>
+          <p class="project-description">{{ project.descripcion }}</p>
+          <div class="project-meta">
+            <div class="project-author">
+              <mat-icon>person</mat-icon>
+              <span>{{ project.creadorNombre }}</span>
+            </div>
+            <div class="project-collaborators">
+              <mat-icon>group</mat-icon>
+              <span>{{ project.colaboradores.length }} colaboradores</span>
+            </div>
+          </div>
+          <div class="project-tags">
+            <span *ngFor="let tag of project.etiquetas" class="tag">{{ tag }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Tab -->
+      <div *ngIf="activeTab === 'users'" class="users-grid">
+        <div *ngIf="filteredUsers.length === 0" class="empty-state">
+          <mat-icon>people</mat-icon>
+          <p>No se encontraron usuarios</p>
+        </div>
+
+        <div *ngFor="let user of filteredUsers" class="user-card-item">
+          <div class="user-avatar-large">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+          <h4>{{ user.nombres }} {{ user.apellidos }}</h4>
+          <p class="user-email-small">{{ user.email }}</p>
+          <button class="btn-primary-small">
+            <mat-icon>person_add</mat-icon>
+            Conectar
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Message Toast -->
+  <div *ngIf="message" class="message-toast" [ngClass]="messageType">
+    {{ message }}
+  </div>
+</div>
+
+<!-- Create Project Modal -->
+<div *ngIf="showCreateProjectModal" class="modal-overlay" (click)="closeCreateProjectModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Crear Nuevo Proyecto</h2>
+      <button (click)="closeCreateProjectModal()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <form [formGroup]="createProjectForm" (ngSubmit)="onCreateProject()">
+      <div class="form-group">
+        <label for="nombre">Nombre del Proyecto</label>
+        <input type="text" id="nombre" formControlName="nombre" required>
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" formControlName="descripcion" rows="4" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="etiquetas">Etiquetas (separadas por comas)</label>
+        <input type="text" id="etiquetas" formControlName="etiquetas" placeholder="tecnología, educación">
+      </div>
+      <div class="form-group">
+        <label for="visibilidad">Visibilidad</label>
+        <select id="visibilidad" formControlName="visibilidad">
+          <option value="publico">Público</option>
+          <option value="privado">Privado</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" (click)="closeCreateProjectModal()" class="btn-secondary">Cancelar</button>
+        <button type="submit" [disabled]="createProjectForm.invalid" class="btn-primary">Crear Proyecto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Create Post Modal -->
+<div *ngIf="showCreatePostModal" class="modal-overlay" (click)="closeCreatePostModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Nueva Publicación</h2>
+      <button (click)="closeCreatePostModal()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <form [formGroup]="createPostForm" (ngSubmit)="onCreatePost()">
+      <div class="form-group">
+        <label for="projectId">Proyecto</label>
+        <select id="projectId" formControlName="projectId" required>
+          <option value="">Selecciona un proyecto</option>
+          <option *ngFor="let project of projects" [value]="project.id">{{ project.nombre }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="contenido">Contenido</label>
+        <textarea id="contenido" formControlName="contenido" rows="5" required placeholder="¿Qué estás pensando?"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" (click)="closeCreatePostModal()" class="btn-secondary">Cancelar</button>
+        <button type="submit" [disabled]="createPostForm.invalid" class="btn-primary">Publicar</button>
+      </div>
+    </form>
+  </div>
+</div>
