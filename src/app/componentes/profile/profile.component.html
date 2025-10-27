@@ -1,0 +1,300 @@
+<div class="profile-container">
+  <!-- Header -->
+  <header class="profile-header">
+    <div class="header-left">
+      <button (click)="goToFeed()" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al Feed
+      </button>
+    </div>
+    <div class="header-center">
+      <h1>Mi Perfil</h1>
+    </div>
+    <div class="header-right">
+      <button (click)="logout()" class="icon-btn">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- User Info -->
+  <section class="user-info">
+    <div class="user-avatar-large">
+      <mat-icon>account_circle</mat-icon>
+    </div>
+    <h2>{{ currentUser?.nombre }} {{ currentUser?.apellido }}</h2>
+    <p class="user-email">{{ currentUser?.email }}</p>
+    
+    <!-- Información adicional del usuario -->
+    <div class="user-details">
+      <div class="detail-item">
+        <mat-icon>badge</mat-icon>
+        <span>Cédula: {{ currentUser?.cedula }}</span>
+      </div>
+      <div class="detail-item">
+        <mat-icon>event</mat-icon>
+        <span>Último acceso: {{ currentUser?.lastLogin | date:'short' }}</span>
+      </div>
+    </div>
+
+    <div class="user-stats">
+      <div class="stat">
+        <span class="stat-number">{{ userProjects.length }}</span>
+        <span class="stat-label">Proyectos</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects View -->
+  <main class="profile-main" *ngIf="!selectedProject">
+    <div class="section-header">
+      <h3>Mis Proyectos</h3>
+      <button (click)="openCreateProjectModal()" class="btn-primary">
+        <mat-icon>add</mat-icon>
+        Nuevo Proyecto
+      </button>
+    </div>
+
+    <div class="projects-grid" *ngIf="userProjects.length > 0">
+      <div *ngFor="let project of userProjects" class="project-card" (click)="selectProject(project)">
+        <div class="project-header">
+          <h4>{{ project.nombre }}</h4>
+          <span class="project-status" [class]="project.estado">{{ project.estado }}</span>
+        </div>
+        <p class="project-description">{{ project.descripcion }}</p>
+        <div class="project-meta">
+          <div class="meta-item">
+            <mat-icon>group</mat-icon>
+            <span>{{ project.colaboradores.length }} colaboradores</span>
+          </div>
+          <div class="meta-item">
+            <mat-icon>folder</mat-icon>
+            <span>{{ project.documentos.length }} documentos</span>
+          </div>
+        </div>
+        <div class="project-tags">
+          <span *ngFor="let tag of project.etiquetas" class="tag">{{ tag }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="userProjects.length === 0" class="empty-state">
+      <mat-icon>work_off</mat-icon>
+      <p>No tienes proyectos aún</p>
+      <button (click)="openCreateProjectModal()" class="btn-primary">Crear mi primer proyecto</button>
+    </div>
+  </main>
+
+  <!-- Project Detail View -->
+  <main class="profile-main" *ngIf="selectedProject">
+    <div class="project-detail">
+      <div class="detail-header">
+        <button (click)="backToProjects()" class="back-btn-small">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="detail-title">
+          <h3>{{ selectedProject.nombre }}</h3>
+          <span class="project-status" [class]="selectedProject.estado">{{ selectedProject.estado }}</span>
+        </div>
+      </div>
+
+      <p class="project-description-full">{{ selectedProject.descripcion }}</p>
+
+      <!-- Tabs -->
+      <nav class="detail-tabs">
+        <button 
+          [class.active]="activeTab === 'documents'"
+          (click)="activeTab = 'documents'">
+          <mat-icon>folder</mat-icon>
+          Documentos ({{ projectDocuments.length }})
+        </button>
+        <button 
+          [class.active]="activeTab === 'projects'"
+          (click)="activeTab = 'projects'">
+          <mat-icon>group</mat-icon>
+          Colaboradores ({{ selectedProject.colaboradores.length }})
+        </button>
+      </nav>
+
+      <!-- Documents Tab -->
+      <div *ngIf="activeTab === 'documents'" class="tab-content">
+        <div class="tab-header">
+          <h4>Documentos del Proyecto</h4>
+          <button (click)="openUploadDocumentModal()" class="btn-primary">
+            <mat-icon>upload</mat-icon>
+            Subir Documento
+          </button>
+        </div>
+
+        <div *ngIf="projectDocuments.length === 0" class="empty-state-small">
+          <mat-icon>folder_open</mat-icon>
+          <p>No hay documentos en este proyecto</p>
+        </div>
+
+        <div class="documents-grid" *ngIf="projectDocuments.length > 0">
+          <div *ngFor="let doc of projectDocuments" class="document-card">
+            <div class="document-icon">
+              <mat-icon>{{ getFileIcon(doc.fileType) }}</mat-icon>
+            </div>
+            <div class="document-info">
+              <h5>{{ doc.fileName }}</h5>
+              <p class="document-meta">{{ doc.asunto }}</p>
+              <p class="document-date">{{ doc.fechaSubida }}</p>
+            </div>
+            <button (click)="downloadDocument(doc)" class="icon-btn-small">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collaborators Tab -->
+      <div *ngIf="activeTab === 'projects'" class="tab-content">
+        <div class="tab-header">
+          <h4>Colaboradores</h4>
+          <button 
+            *ngIf="isProjectOwner()"
+            (click)="openAddCollaboratorModal()" 
+            class="btn-primary">
+            <mat-icon>person_add</mat-icon>
+            Agregar Colaborador
+          </button>
+        </div>
+
+        <div class="collaborators-list">
+          <div *ngFor="let collab of selectedProject.colaboradores" class="collaborator-item">
+            <div class="collaborator-avatar">
+              <mat-icon>account_circle</mat-icon>
+            </div>
+            <div class="collaborator-info">
+              <h5>{{ collab.nombre }} {{ collab.apellido }}</h5>
+              <p>{{ collab.email }}</p>
+              <span class="role-badge" [class]="collab.rol">{{ collab.rol }}</span>
+            </div>
+            <button 
+              *ngIf="isProjectOwner() && collab.rol !== 'owner'"
+              (click)="removeCollaborator(collab.email)"
+              class="icon-btn-danger">
+              <mat-icon>person_remove</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Message Toast -->
+  <div *ngIf="message" class="message-toast" [ngClass]="messageType">
+    {{ message }}
+  </div>
+</div>
+
+<!-- Create Project Modal -->
+<div *ngIf="showCreateProjectModal" class="modal-overlay" (click)="closeCreateProjectModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Crear Nuevo Proyecto</h2>
+      <button (click)="closeCreateProjectModal()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <form [formGroup]="createProjectForm" (ngSubmit)="onCreateProject()">
+      <div class="form-group">
+        <label for="nombre">Nombre del Proyecto</label>
+        <input type="text" id="nombre" formControlName="nombre" required>
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" formControlName="descripcion" rows="4" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="etiquetas">Etiquetas (separadas por comas)</label>
+        <input type="text" id="etiquetas" formControlName="etiquetas" placeholder="tecnología, educación">
+      </div>
+      <div class="form-group">
+        <label for="visibilidad">Visibilidad</label>
+        <select id="visibilidad" formControlName="visibilidad">
+          <option value="publico">Público</option>
+          <option value="privado">Privado</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" (click)="closeCreateProjectModal()" class="btn-secondary">Cancelar</button>
+        <button type="submit" [disabled]="createProjectForm.invalid" class="btn-primary">Crear Proyecto</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Collaborator Modal -->
+<div *ngIf="showAddCollaboratorModal" class="modal-overlay" (click)="closeAddCollaboratorModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Agregar Colaborador</h2>
+      <button (click)="closeAddCollaboratorModal()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <form [formGroup]="addCollaboratorForm" (ngSubmit)="onAddCollaborator()">
+      <div class="form-group">
+        <label for="email">Email del Usuario</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          (input)="onEmailInput($event)"
+          placeholder="usuario@live.uleam.edu.ec"
+          required>
+        <ul class="autocomplete-list" *ngIf="showAutocomplete">
+          <li 
+            *ngFor="let user of autocompleteUsers"
+            (click)="selectUser(user)">
+            {{ user.nombres }} {{ user.apellidos }} ({{ user.email }})
+          </li>
+        </ul>
+      </div>
+      <div class="modal-actions">
+        <button type="button" (click)="closeAddCollaboratorModal()" class="btn-secondary">Cancelar</button>
+        <button type="submit" [disabled]="addCollaboratorForm.invalid" class="btn-primary">Agregar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Upload Document Modal -->
+<div *ngIf="showUploadDocumentModal" class="modal-overlay" (click)="closeUploadDocumentModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Subir Documento</h2>
+      <button (click)="closeUploadDocumentModal()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <form [formGroup]="uploadDocumentForm" (ngSubmit)="onUploadDocument()">
+      <div class="form-group">
+        <label for="numero">Número de Documento</label>
+        <input type="text" id="numero" formControlName="numero" required>
+      </div>
+      <div class="form-group">
+        <label for="tipo">Tipo de Documento</label>
+        <input type="text" id="tipo" formControlName="tipo" required>
+      </div>
+      <div class="form-group">
+        <label for="asunto">Asunto</label>
+        <input type="text" id="asunto" formControlName="asunto" required>
+      </div>
+      <div class="form-group">
+        <label for="file">Seleccionar Archivo</label>
+        <input type="file" id="file" (change)="onFileSelected($event)" required>
+      </div>
+      <div class="form-group">
+        <label for="etiquetas">Etiquetas (separadas por comas)</label>
+        <input type="text" id="etiquetas" formControlName="etiquetas" placeholder="informe, tesis">
+      </div>
+      <div class="modal-actions">
+        <button type="button" (click)="closeUploadDocumentModal()" class="btn-secondary">Cancelar</button>
+        <button type="submit" [disabled]="uploadDocumentForm.invalid" class="btn-primary">Subir</button>
+      </div>
+    </form>
+  </div>
+</div>
