@@ -34,6 +34,7 @@ export class FeedComponent implements OnInit {
   createPostForm: FormGroup;
   commentForm: FormGroup;
   searchTerm = '';
+  filteredProjects: Project[] = [];
   
   selectedPostForComment: ProjectPost | null = null;
   showCommentBox: { [postId: string]: boolean } = {};
@@ -77,9 +78,35 @@ export class FeedComponent implements OnInit {
 
   private loadData(): void {
     this.projects = this.projectService.getPublicProjects();
+    this.filteredProjects = this.projects;
     this.posts = this.projectService.getAllPosts();
     this.users = this.usersService.getAllUsers().filter(u => !u.isAdmin && u.email !== this.currentUser?.email);
     this.filteredUsers = this.users;
+  }
+
+  onSearch(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+    this.searchTerm = searchTerm;
+
+    switch (this.activeTab) {
+      case 'projects':
+        this.filteredProjects = this.projects.filter(project =>
+          project.nombre.toLowerCase().includes(searchTerm) ||
+          project.descripcion.toLowerCase().includes(searchTerm) ||
+          project.etiquetas?.some(tag => tag.toLowerCase().includes(searchTerm))
+        );
+        break;
+      case 'users':
+        this.filteredUsers = this.users.filter(user =>
+          user.nombres.toLowerCase().includes(searchTerm) ||
+          user.apellidos.toLowerCase().includes(searchTerm) ||
+          user.email.toLowerCase().includes(searchTerm)
+        );
+        break;
+      default:
+        // Para el feed, podrías filtrar los posts si lo deseas
+        break;
+    }
   }
 
   private showMessage(message: string, type: 'Success' | 'Error'): void {
@@ -94,19 +121,13 @@ export class FeedComponent implements OnInit {
   public setActiveTab(tab: 'feed' | 'projects' | 'users'): void {
     this.activeTab = tab;
     this.searchTerm = '';
-    this.filteredUsers = this.users;
-  }
-
-  public onSearch(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.searchTerm = target.value.toLowerCase();
-    
-    if (this.activeTab === 'users') {
-      this.filteredUsers = this.users.filter(u => 
-        u.nombres.toLowerCase().includes(this.searchTerm) ||
-        u.apellidos.toLowerCase().includes(this.searchTerm) ||
-        u.email.toLowerCase().includes(this.searchTerm)
-      );
+    switch (tab) {
+      case 'projects':
+        this.filteredProjects = this.projects;
+        break;
+      case 'users':
+        this.filteredUsers = this.users;
+        break;
     }
   }
 

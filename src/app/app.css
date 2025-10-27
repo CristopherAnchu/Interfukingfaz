@@ -1,1 +1,41 @@
-/* comentario */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.app-footer {
+  background-color: #f5f5f5;
+  padding: 20px 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.terms-link {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.terms-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.copyright {
+  color: #666;
+  margin: 0;
+  font-size: 0.9em;
+}

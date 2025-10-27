@@ -155,12 +155,12 @@
 
       <!-- Projects Tab -->
       <div *ngIf="activeTab === 'projects'" class="projects-grid">
-        <div *ngIf="projects.length === 0" class="empty-state">
+        <div *ngIf="filteredProjects.length === 0" class="empty-state">
           <mat-icon>work</mat-icon>
-          <p>No hay proyectos disponibles</p>
+          <p>{{searchTerm ? 'No se encontraron proyectos' : 'No hay proyectos disponibles'}}</p>
         </div>
 
-        <div *ngFor="let project of projects" class="project-card">
+        <div *ngFor="let project of filteredProjects" class="project-card">
           <div class="project-header">
             <h3>{{ project.nombre }}</h3>
             <span class="project-status" [class]="project.estado">{{ project.estado }}</span>
