@@ -7,6 +7,8 @@ export class StorageService {
   private readonly USER_KEY = 'LOCALUSER';
   private readonly DOCUMENT_KEY = 'LOCALDOCUMENT';
   private readonly CURRENT_USER_KEY = 'LOCALCURRENTUSER';
+  private readonly PROJECT_KEY = 'LOCALPROJECTS';
+  private readonly POST_KEY = 'LOCALPOSTS';
 
   private SetItem(key: string, value: any) {
     try {
@@ -73,6 +75,32 @@ export class StorageService {
 
   removeCurrentUser(): void {
     sessionStorage.removeItem(this.CURRENT_USER_KEY)
+  }
+
+  // set, get y delete para proyectos
+  public getProjects(): any[] {
+    return this.GetItem(this.PROJECT_KEY) || [];
+  }
+
+  public setProjects(projects: any[]) {
+    this.SetItem(this.PROJECT_KEY, projects);
+  }
+
+  public deleteProjects() {
+    this.RemoveItem(this.PROJECT_KEY);
+  }
+
+  // set, get y delete para posts
+  public getPosts(): any[] {
+    return this.GetItem(this.POST_KEY) || [];
+  }
+
+  public setPosts(posts: any[]) {
+    this.SetItem(this.POST_KEY, posts);
+  }
+
+  public deletePosts() {
+    this.RemoveItem(this.POST_KEY);
   }
 
 }

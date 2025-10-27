@@ -33,7 +33,7 @@ export class DocumentService {
 
     const newDocument: DocumentsInterface = {
       id: `doc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      fechasubida: new Date().toISOString().slice(0, 10),
+      fechaSubida: new Date().toISOString().slice(0, 10),
       ...documentData,
       visibleTo: initialVisibleTo
     }

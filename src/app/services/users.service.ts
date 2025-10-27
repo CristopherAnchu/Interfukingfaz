@@ -78,7 +78,7 @@ export class UsersService {
     const users = this.storage.getUsers()
 
     // Verficar que el usuario no exista mediante el correo
-    if (users.some((user) => user.email === cedula)) {
+    if (users.some((user) => user.email === email)) {
       console.log("Ya existe un usuario con este correo electrónico.")
       return { success: false, message: "Ya existe un usuario con este correo electrónico." }
     }
