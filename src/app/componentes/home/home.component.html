@@ -2,6 +2,9 @@
   <aside class="sidebar">
     <img src="img/uleam_logo.png" alt="Logo ULEAM">
     <nav class="nav-menu">
+      <button (click)="goToFeed()" class="secondary">
+        <mat-icon>arrow_back</mat-icon> Volver al Feed
+      </button>
       <button 
         [class.active]="currentView === 'myFiles'"
         (click)="setView('myFiles')">

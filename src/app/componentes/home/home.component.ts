@@ -3,6 +3,7 @@ import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 
 //Importaciones de los servicios
 import { UsersService } from '../../services/users.service';
@@ -68,6 +69,7 @@ export class HomeComponent {
     private authService: AuthService,
     private documentService: DocumentService,
     private usersService: UsersService,
+    private router: Router
   ){
     this.uploadForm = this.fb.group({
       numero: ["", Validators.required],
@@ -380,6 +382,10 @@ export class HomeComponent {
       this.usersService.updateLastDocumentCheck(this.currentuser.email, "general")
       this.updateNotifications()
     }
+  }
+
+  public goToFeed(): void {
+    this.router.navigate(['/feed'])
   }
 
   public logout(): void {

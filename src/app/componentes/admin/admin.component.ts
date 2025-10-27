@@ -131,5 +131,4 @@ export class AdminComponent {
   public logout(): void {
     this.authService.logout()
   }
-
 }
