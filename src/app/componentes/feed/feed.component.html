@@ -8,7 +8,7 @@
     <div class="header-center">
       <input 
         type="search"
-        placeholder="Buscar..."
+        [placeholder]="i18n.translate('feed.search')"
         [value]="searchTerm"
         (input)="onSearch($event)"
         class="search-input">
@@ -17,6 +17,20 @@
       <button (click)="viewProfile()" class="icon-btn" title="Ver mi perfil">
         <mat-icon>account_circle</mat-icon>
       </button>
+      <div class="language-selector">
+        <button (click)="toggleLanguage()" class="lang-btn" [title]="'Cambiar idioma'">
+          <mat-icon>language</mat-icon>
+          <span class="lang-text">{{ getCurrentLanguage() }}</span>
+        </button>
+        <div class="lang-dropdown" *ngIf="isLanguageOpen">
+          <button (click)="changeLanguage('es')" [class.active]="currentLanguage === 'es'" class="lang-option">
+            <span class="flag">ES</span> Español
+          </button>
+          <button (click)="changeLanguage('en')" [class.active]="currentLanguage === 'en'" class="lang-option">
+            <span class="flag">EN</span> English
+          </button>
+        </div>
+      </div>
       <button (click)="logout()" class="icon-btn" title="Cerrar sesión">
         <mat-icon>logout</mat-icon>
       </button>
@@ -35,7 +49,7 @@
       [class.active]="activeTab === 'projects'"
       (click)="setActiveTab('projects')">
       <mat-icon>work</mat-icon>
-      Proyectos
+      {{ i18n.translate('home.new') }}
     </button>
     <button 
       [class.active]="activeTab === 'users'"
@@ -55,18 +69,18 @@
         </div>
         <h3>{{ currentUser?.nombre }} {{ currentUser?.apellido }}</h3>
         <p class="user-email">{{ currentUser?.email }}</p>
-        <button (click)="viewProfile()" class="btn-secondary">Ver Perfil</button>
+        <button (click)="viewProfile()" class="btn-secondary">{{ i18n.translate('feed.viewProfile') }}</button>
       </div>
 
       <div class="quick-actions">
-        <h4>Acciones Rápidas</h4>
+        <h4>{{ i18n.translate('feed.quickActions') }}</h4>
         <button (click)="openCreateProjectModal()" class="btn-primary">
           <mat-icon>add</mat-icon>
-          Crear Proyecto
+          {{ i18n.translate('feed.createProject') }}
         </button>
         <button (click)="openCreatePostModal()" class="btn-secondary">
           <mat-icon>post_add</mat-icon>
-          Nueva Publicación
+          {{ i18n.translate('feed.newPost') }}
         </button>
       </div>
     </aside>
@@ -77,7 +91,7 @@
       <div *ngIf="activeTab === 'feed'" class="feed-posts">
         <div *ngIf="posts.length === 0" class="empty-state">
           <mat-icon>dynamic_feed</mat-icon>
-          <p>No hay publicaciones aún</p>
+          <p>{{ i18n.translate('feed.noPublications') }}</p>
         </div>
 
         <div *ngFor="let post of posts" class="post-card">
@@ -143,7 +157,7 @@
               <input 
                 type="text" 
                 formControlName="contenido" 
-                placeholder="Escribe un comentario..."
+                [placeholder]="i18n.translate('feed.writeComment')"
                 class="comment-input">
               <button type="submit" [disabled]="commentForm.invalid" class="comment-submit">
                 <mat-icon>send</mat-icon>
@@ -157,7 +171,7 @@
       <div *ngIf="activeTab === 'projects'" class="projects-grid">
         <div *ngIf="filteredProjects.length === 0" class="empty-state">
           <mat-icon>work</mat-icon>
-          <p>{{searchTerm ? 'No se encontraron proyectos' : 'No hay proyectos disponibles'}}</p>
+          <p>{{searchTerm ? i18n.translate('feed.projectsNotFound') : i18n.translate('feed.noProjects')}}</p>
         </div>
 
         <div *ngFor="let project of filteredProjects" class="project-card">
@@ -186,7 +200,7 @@
       <div *ngIf="activeTab === 'users'" class="users-grid">
         <div *ngIf="filteredUsers.length === 0" class="empty-state">
           <mat-icon>people</mat-icon>
-          <p>No se encontraron usuarios</p>
+          <p>{{ i18n.translate('feed.noUsers') }}</p>
         </div>
 
         <div *ngFor="let user of filteredUsers" class="user-card-item">
@@ -197,7 +211,7 @@
           <p class="user-email-small">{{ user.email }}</p>
           <button class="btn-primary-small">
             <mat-icon>person_add</mat-icon>
-            Conectar
+            {{ i18n.translate('feed.connect') }}
           </button>
         </div>
       </div>
@@ -210,68 +224,66 @@
   </div>
 </div>
 
-<!-- Create Project Modal -->
-<div *ngIf="showCreateProjectModal" class="modal-overlay" (click)="closeCreateProjectModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Crear Nuevo Proyecto</h2>
-      <button (click)="closeCreateProjectModal()" class="close-btn">
-        <mat-icon>close</mat-icon>
-      </button>
+  <!-- Create Project Modal -->
+  <div *ngIf="showCreateProjectModal" class="modal-overlay" (click)="closeCreateProjectModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ i18n.translate('feed.createNewProject') }}</h2>
+        <button (click)="closeCreateProjectModal()" class="close-btn">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <form [formGroup]="createProjectForm" (ngSubmit)="onCreateProject()">
+        <div class="form-group">
+          <label for="nombre">{{ i18n.translate('feed.projectName') }}</label>
+          <input type="text" id="nombre" formControlName="nombre" required>
+        </div>
+        <div class="form-group">
+          <label for="descripcion">{{ i18n.translate('feed.description') }}</label>
+          <textarea id="descripcion" formControlName="descripcion" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="etiquetas">{{ i18n.translate('feed.tags') }}</label>
+          <input type="text" id="etiquetas" formControlName="etiquetas" [placeholder]="i18n.translate('upload.tagsPlaceholder')">
+        </div>
+        <div class="form-group">
+          <label for="visibilidad">{{ i18n.translate('feed.visibility') }}</label>
+          <select id="visibilidad" formControlName="visibilidad">
+            <option value="publico">{{ i18n.translate('feed.public') }}</option>
+            <option value="privado">{{ i18n.translate('feed.private') }}</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" (click)="closeCreateProjectModal()" class="btn-secondary">{{ i18n.translate('common.cancel') }}</button>
+          <button type="submit" [disabled]="createProjectForm.invalid" class="btn-primary">{{ i18n.translate('feed.createProject') }}</button>
+        </div>
+      </form>
     </div>
-    <form [formGroup]="createProjectForm" (ngSubmit)="onCreateProject()">
-      <div class="form-group">
-        <label for="nombre">Nombre del Proyecto</label>
-        <input type="text" id="nombre" formControlName="nombre" required>
+  </div>  <!-- Create Post Modal -->
+  <div *ngIf="showCreatePostModal" class="modal-overlay" (click)="closeCreatePostModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ i18n.translate('feed.newPublication') }}</h2>
+        <button (click)="closeCreatePostModal()" class="close-btn">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
-      <div class="form-group">
-        <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" formControlName="descripcion" rows="4" required></textarea>
-      </div>
-      <div class="form-group">
-        <label for="etiquetas">Etiquetas (separadas por comas)</label>
-        <input type="text" id="etiquetas" formControlName="etiquetas" placeholder="tecnología, educación">
-      </div>
-      <div class="form-group">
-        <label for="visibilidad">Visibilidad</label>
-        <select id="visibilidad" formControlName="visibilidad">
-          <option value="publico">Público</option>
-          <option value="privado">Privado</option>
-        </select>
-      </div>
-      <div class="modal-actions">
-        <button type="button" (click)="closeCreateProjectModal()" class="btn-secondary">Cancelar</button>
-        <button type="submit" [disabled]="createProjectForm.invalid" class="btn-primary">Crear Proyecto</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Create Post Modal -->
-<div *ngIf="showCreatePostModal" class="modal-overlay" (click)="closeCreatePostModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h2>Nueva Publicación</h2>
-      <button (click)="closeCreatePostModal()" class="close-btn">
-        <mat-icon>close</mat-icon>
-      </button>
+      <form [formGroup]="createPostForm" (ngSubmit)="onCreatePost()">
+        <div class="form-group">
+          <label for="projectId">{{ i18n.translate('home.new') }}</label>
+          <select id="projectId" formControlName="projectId" required>
+            <option value="">{{ i18n.translate('feed.selectProject') }}</option>
+            <option *ngFor="let project of projects" [value]="project.id">{{ project.nombre }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="contenido">{{ i18n.translate('feed.content') }}</label>
+          <textarea id="contenido" formControlName="contenido" rows="5" required [placeholder]="i18n.translate('feed.thinkingAbout')"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" (click)="closeCreatePostModal()" class="btn-secondary">{{ i18n.translate('common.cancel') }}</button>
+          <button type="submit" [disabled]="createPostForm.invalid" class="btn-primary">{{ i18n.translate('feed.publish') }}</button>
+        </div>
+      </form>
     </div>
-    <form [formGroup]="createPostForm" (ngSubmit)="onCreatePost()">
-      <div class="form-group">
-        <label for="projectId">Proyecto</label>
-        <select id="projectId" formControlName="projectId" required>
-          <option value="">Selecciona un proyecto</option>
-          <option *ngFor="let project of projects" [value]="project.id">{{ project.nombre }}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="contenido">Contenido</label>
-        <textarea id="contenido" formControlName="contenido" rows="5" required placeholder="¿Qué estás pensando?"></textarea>
-      </div>
-      <div class="modal-actions">
-        <button type="button" (click)="closeCreatePostModal()" class="btn-secondary">Cancelar</button>
-        <button type="submit" [disabled]="createPostForm.invalid" class="btn-primary">Publicar</button>
-      </div>
-    </form>
   </div>
-</div>

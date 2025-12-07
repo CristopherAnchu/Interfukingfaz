@@ -1,4 +1,71 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Importar estilos de accesibilidad */
+@import './styles-accessibility.css';
+
+html, body { 
+  height: 100%; 
+  scroll-behavior: smooth;
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow-x: hidden;
+}
+
+/* Reset y estilos base mejorados */
+* {
+  box-sizing: border-box;
+}
+
+/* Mejoras globales de responsive */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Utilidades globales */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: block !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Contenedores responsive */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+}
+
+/* Mejoras de accesibilidad para Material Icons */
+mat-icon {
+  user-select: none;
+}
+
+/* Transiciones suaves globales */
+a, button {
+  transition: all 0.3s ease;
+}

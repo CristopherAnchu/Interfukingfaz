@@ -1,0 +1,124 @@
+<div class="filters-container" [formGroup]="filterForm">
+  <!-- Barra de búsqueda principal -->
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+    <input
+      type="search"
+      formControlName="searchTerm"
+      placeholder="Buscar por nombre, número o asunto..."
+      class="search-input">
+    
+    <button 
+      type="button" 
+      class="btn-advanced"
+      (click)="toggleAdvanced()"
+      [class.active]="showAdvanced">
+      <mat-icon>tune</mat-icon>
+      <span>Filtros avanzados</span>
+      <span class="filter-count" *ngIf="getActiveFiltersCount() > 0">
+        {{ getActiveFiltersCount() }}
+      </span>
+    </button>
+
+    <button 
+      type="button" 
+      class="btn-clear"
+      *ngIf="hasActiveFilters()"
+      (click)="clearFilters()">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+
+  <!-- Panel de filtros avanzados -->
+  <div class="advanced-panel" *ngIf="showAdvanced">
+    <div class="filter-grid">
+      <!-- Filtro por etiquetas -->
+      <div class="filter-section" *ngIf="availableTags.length > 0">
+        <label class="filter-label">
+          <mat-icon>label</mat-icon>
+          Etiquetas
+        </label>
+        <div class="tags-list">
+          <button
+            type="button"
+            *ngFor="let tag of availableTags"
+            class="tag-chip"
+            [class.selected]="isTagSelected(tag)"
+            (click)="toggleTag(tag)">
+            {{ tag }}
+            <mat-icon *ngIf="isTagSelected(tag)">check</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtro por rango de fechas -->
+      <div class="filter-section">
+        <label class="filter-label">
+          <mat-icon>date_range</mat-icon>
+          Rango de fechas
+        </label>
+        <div class="date-range">
+          <input
+            type="date"
+            formControlName="dateFrom"
+            placeholder="Desde"
+            class="date-input">
+          <span>-</span>
+          <input
+            type="date"
+            formControlName="dateTo"
+            placeholder="Hasta"
+            class="date-input">
+        </div>
+      </div>
+
+      <!-- Filtro por tipo de archivo -->
+      <div class="filter-section">
+        <label class="filter-label">
+          <mat-icon>insert_drive_file</mat-icon>
+          Tipo de archivo
+        </label>
+        <select formControlName="fileType" class="filter-select">
+          <option value="">Todos los tipos</option>
+          <option *ngFor="let type of availableFileTypes" [value]="type">
+            {{ type.toUpperCase() }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Filtro por autor -->
+      <div class="filter-section">
+        <label class="filter-label">
+          <mat-icon>person</mat-icon>
+          Autor
+        </label>
+        <input
+          type="text"
+          formControlName="author"
+          placeholder="Nombre del autor..."
+          class="filter-input">
+      </div>
+
+      <!-- Ordenamiento -->
+      <div class="filter-section">
+        <label class="filter-label">
+          <mat-icon>sort</mat-icon>
+          Ordenar por
+        </label>
+        <div class="sort-controls">
+          <select formControlName="sortBy" class="filter-select">
+            <option value="date">Fecha</option>
+            <option value="name">Nombre</option>
+            <option value="type">Tipo</option>
+          </select>
+          <button
+            type="button"
+            class="btn-sort-order"
+            (click)="filterForm.patchValue({ sortOrder: filterForm.value.sortOrder === 'asc' ? 'desc' : 'asc' })">
+            <mat-icon>{{ filterForm.value.sortOrder === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

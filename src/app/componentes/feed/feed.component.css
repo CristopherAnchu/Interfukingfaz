@@ -773,3 +773,101 @@
   background: #ccc;
   cursor: not-allowed;
 }
+
+/* Language Selector */
+.language-selector {
+  position: relative;
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  color: #333;
+}
+
+.lang-btn:hover {
+  background-color: #e8e8e8;
+  border-color: #d32f2f;
+}
+
+.lang-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.lang-text {
+  font-weight: 600;
+  min-width: 25px;
+  text-align: center;
+}
+
+.lang-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 5px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 140px;
+}
+
+.lang-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s ease;
+  text-align: left;
+}
+
+.lang-dropdown button:first-child {
+  border-radius: 4px 4px 0 0;
+}
+
+.lang-dropdown button:last-child {
+  border-radius: 0 0 4px 4px;
+}
+
+.lang-dropdown button:hover {
+  background-color: #f5f5f5;
+  color: #d32f2f;
+}
+
+.lang-dropdown button.active {
+  background-color: #fff3f3;
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.lang-dropdown button .flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  padding: 2px 6px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #d32f2f;
+  border: 1px solid #ddd;
+}
+

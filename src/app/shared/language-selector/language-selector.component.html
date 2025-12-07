@@ -1,0 +1,23 @@
+<div class="language-selector" (clickOutside)="isOpen = false">
+  <button 
+    class="language-trigger"
+    (click)="toggleDropdown()"
+    [attr.aria-label]="'Selector de idioma'"
+    [attr.aria-expanded]="isOpen">
+    <span class="flag">{{ getCurrentLanguageFlag() }}</span>
+    <span class="lang-code">{{ currentLanguage.toUpperCase() }}</span>
+    <mat-icon class="dropdown-icon">{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </button>
+
+  <div class="language-dropdown" *ngIf="isOpen">
+    <button
+      *ngFor="let lang of languages"
+      class="language-option"
+      [class.active]="lang.code === currentLanguage"
+      (click)="selectLanguage(lang.code)">
+      <span class="flag">{{ lang.flag }}</span>
+      <span class="lang-name">{{ lang.name }}</span>
+      <mat-icon *ngIf="lang.code === currentLanguage" class="check-icon">check</mat-icon>
+    </button>
+  </div>
+</div>

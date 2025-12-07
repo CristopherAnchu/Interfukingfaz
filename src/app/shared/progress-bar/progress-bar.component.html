@@ -1,0 +1,20 @@
+<div class="progress-container">
+  <div class="progress-label" *ngIf="label">
+    <span>{{ label }}</span>
+    <span *ngIf="showPercentage" class="progress-percentage">{{ progress }}%</span>
+  </div>
+  <div class="progress-bar-wrapper" [ngStyle]="containerStyle">
+    <div 
+      class="progress-bar-fill"
+      [ngStyle]="progressStyle"
+      [class.animated]="animated"
+      role="progressbar"
+      [attr.aria-valuenow]="progress"
+      [attr.aria-valuemin]="0"
+      [attr.aria-valuemax]="100">
+    </div>
+  </div>
+  <div class="progress-percentage-only" *ngIf="showPercentage && !label">
+    {{ progress }}%
+  </div>
+</div>

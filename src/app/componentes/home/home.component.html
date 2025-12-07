@@ -3,41 +3,43 @@
     <img src="img/uleam_logo.png" alt="Logo ULEAM">
     <nav class="nav-menu">
       <button (click)="goToFeed()" class="secondary">
-        <mat-icon>arrow_back</mat-icon> Volver al Feed
+        <mat-icon>arrow_back</mat-icon> {{ i18n.translate('home.backToFeed') }}
       </button>
       <button 
         [class.active]="currentView === 'myFiles'"
         (click)="setView('myFiles')">
-        <mat-icon>folder</mat-icon> Mis archivos
+        <mat-icon>folder</mat-icon> {{ i18n.translate('home.myFiles') }}
       </button>
       <button 
         [class.active]="currentView === 'receivedFiles'"
         (click)="setView('receivedFiles'); markDocumentsAsRead()">
-        <mat-icon>inbox</mat-icon> Archivos recibidos
+        <mat-icon>inbox</mat-icon> {{ i18n.translate('home.receivedFiles') }}
       </button>
       <button 
         [class.active]="currentView === 'myDrive'"
         (click)="setView('myDrive')">
-        <mat-icon>storage</mat-icon> Mi unidad
+        <mat-icon>storage</mat-icon> {{ i18n.translate('home.myDrive') }}
       </button>
       <button 
         [class.active]="currentView === 'uploadForm'"
         (click)="setView('uploadForm')">
-        <mat-icon>upload</mat-icon> Subir archivo
+        <mat-icon>upload</mat-icon> {{ i18n.translate('home.uploadFile') }}
       </button>
     </nav>
     <button (click)="logout()" class="secondary">
-      <mat-icon>logout</mat-icon> Cerrar Sesión
+      <mat-icon>logout</mat-icon> {{ i18n.translate('home.logout') }}
     </button>
   </aside>
 
   <main class="main-content">
     <header class="main-header">
-      <h1>{{ getViewTitle() }}</h1>
-      <div class="header-actions" *ngIf="!showUploadForm">
+      <div class="header-left">
+        <h1>{{ getViewTitle() }}</h1>
+      </div>
+      <div class="header-center" *ngIf="!showUploadForm">
         <input 
           type="search"
-          placeholder="Buscar documentos..."
+          [placeholder]="i18n.translate('home.search')"
           [value]="searchTerm"
           (input)="onSearch($event)">
         <button 
@@ -45,13 +47,25 @@
           class="secondary"
           [class.active-filter]="selectedTags.length > 0">
           <mat-icon>filter_list</mat-icon>
-          {{ selectedTags.length > 0 ? 'Filtro (' + selectedTags.length + ')' : 'Filtro' }}
+          {{ selectedTags.length > 0 ? i18n.translate('home.filter') + ' (' + selectedTags.length + ')' : i18n.translate('home.filter') }}
         </button>
-        <span 
-          *ngIf="newdocumentsCount > 0"
-          class="notification-badge">
-          {{ newdocumentsCount }} Nuevos
-        </span>
+      </div>
+      <div class="header-right">
+        <div class="language-selector">
+          <button (click)="toggleLanguage()" class="lang-btn" [title]="'Cambiar idioma'">
+            <mat-icon>language</mat-icon>
+            <span class="lang-text">{{ getCurrentLanguage() }}</span>
+            <mat-icon class="dropdown-icon">expand_more</mat-icon>
+          </button>
+          <div class="lang-dropdown" *ngIf="isLanguageOpen">
+            <button (click)="changeLanguage('es')" [class.active]="currentLanguage === 'es'" class="lang-option">
+              <span class="flag">ES</span> Español
+            </button>
+            <button (click)="changeLanguage('en')" [class.active]="currentLanguage === 'en'" class="lang-option">
+              <span class="flag">EN</span> English
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -70,28 +84,28 @@
         </div>
       </div>
       <p *ngIf="filteredDocuments.length === 0" class="empty-message">
-        No se encontraron documentos con los filtros aplicados.
+        {{ i18n.translate('home.noDocuments') }}
       </p>
     </section>
 
     <!-- Upload Form -->
     <div class="upload-form-container" *ngIf="showUploadForm">
-      <h2>Subir Nuevo Documento</h2>
+      <h2>{{ i18n.translate('upload.title') }}</h2>
       <form [formGroup]="uploadForm" (ngSubmit)="onUploadSubmit()">
         <div class="form-group">
-          <label for="numero">Número de Documento:</label>
+          <label for="numero">{{ i18n.translate('upload.number') }}</label>
           <input type="text" id="numero" formControlName="numero" required>
         </div>
         <div class="form-group">
-          <label for="tipo">Tipo de Documento:</label>
+          <label for="tipo">{{ i18n.translate('upload.type') }}</label>
           <input type="text" id="tipo" formControlName="tipo" required>
         </div>
         <div class="form-group">
-          <label for="asunto">Asunto:</label>
+          <label for="asunto">{{ i18n.translate('upload.subject') }}</label>
           <input type="text" id="asunto" formControlName="asunto" required>
         </div>
         <div class="form-group">
-          <label for="paraQuienEsEmail">Para Quién Es (Email ULEAM):</label>
+          <label for="paraQuienEsEmail">{{ i18n.translate('upload.recipient') }}</label>
           <input 
             type="email"
             id="paraQuienEsEmail"
@@ -109,19 +123,19 @@
           </ul>
         </div>
         <div class="form-group">
-          <label for="file">Seleccionar Archivo:</label>
+          <label for="file">{{ i18n.translate('upload.file') }}</label>
           <input type="file" id="file" (change)="onFileSelected($event)" required>
         </div>
         <div class="form-group">
-          <label for="etiquetas">Etiquetas (separadas por comas):</label>
+          <label for="etiquetas">{{ i18n.translate('upload.tags') }}</label>
           <input 
             type="text"
             id="etiquetas"
             formControlName="etiquetas"
-            placeholder="Ej: informe, tesis, acta">
+            [placeholder]="i18n.translate('upload.tagsPlaceholder')">
         </div>
         <button type="submit" class="primary" [disabled]="uploadForm.invalid">
-          Subir Documento
+          {{ i18n.translate('upload.submit') }}
         </button>
         <div 
           *ngIf="message"
@@ -138,7 +152,7 @@
 <div class="tags-filter-panel" *ngIf="showTagsFilter" (click)="showTagsFilter = false">
   <div class="filter-content" (click)="$event.stopPropagation()">
     <div class="filter-header">
-      <h3>Filtrar por Etiquetas</h3>
+      <h3>{{ i18n.translate('filter.title') }}</h3>
       <span class="close-filter" (click)="showTagsFilter = false">&times;</span>
     </div>
     <div class="tags-container">
@@ -156,10 +170,10 @@
     </div>
     <div class="filter-actions">
       <button (click)="applyFilters(); showTagsFilter = false" class="primary">
-        Aplicar Filtro
+        {{ i18n.translate('filter.apply') }}
       </button>
       <button (click)="clearFilters(); showTagsFilter = false" class="secondary">
-        Limpiar Filtro
+        {{ i18n.translate('filter.clear') }}
       </button>
     </div>
   </div>

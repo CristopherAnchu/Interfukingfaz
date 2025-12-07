@@ -1,0 +1,188 @@
+/* Estilos de accesibilidad global */
+
+/* Modo alto contraste */
+:root.high-contrast {
+  --bg-color: #000;
+  --text-color: #fff;
+  --primary-color: #ff0;
+  --secondary-color: #0ff;
+  --border-color: #fff;
+}
+
+:root.high-contrast body {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+:root.high-contrast .form-container,
+:root.high-contrast .sidebar,
+:root.high-contrast .main-content,
+:root.high-contrast .content-area {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+
+:root.high-contrast button,
+:root.high-contrast input,
+:root.high-contrast select,
+:root.high-contrast textarea {
+  background-color: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+
+:root.high-contrast button:hover,
+:root.high-contrast .nav-menu button:hover {
+  background-color: #ff0 !important;
+  color: #000 !important;
+}
+
+:root.high-contrast a {
+  color: #0ff !important;
+  text-decoration: underline !important;
+}
+
+:root.high-contrast .form-header h1,
+:root.high-contrast h1,
+:root.high-contrast h2,
+:root.high-contrast h3 {
+  color: #ff0 !important;
+}
+
+/* Texto ampliado */
+:root.large-text {
+  font-size: 18px;
+}
+
+:root.large-text body {
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+:root.large-text h1 {
+  font-size: 2em;
+}
+
+:root.large-text h2 {
+  font-size: 1.6em;
+}
+
+:root.large-text h3 {
+  font-size: 1.3em;
+}
+
+:root.large-text button,
+:root.large-text input,
+:root.large-text select {
+  font-size: 1.1em;
+  padding: 12px 16px;
+}
+
+:root.large-text .form-container {
+  max-width: 550px;
+}
+
+/* Focus visible mejorado para navegación por teclado */
+*:focus-visible {
+  outline: 3px solid #c00;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #c00;
+  outline-offset: 2px;
+}
+
+/* Skip to content link para accesibilidad */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #c00;
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Mejoras de contraste para elementos interactivos */
+button[disabled],
+input[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Animaciones reducidas para usuarios con preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mejoras de legibilidad */
+p, li, td, th {
+  line-height: 1.6;
+}
+
+/* Área de toque más grande para móviles */
+@media (max-width: 768px) {
+  button,
+  a,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Indicadores visuales para elementos arrastrables */
+[draggable="true"] {
+  cursor: move;
+}
+
+/* Mejora de contraste para placeholder */
+::placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+:root.high-contrast ::placeholder {
+  color: #ccc;
+}
+
+/* Estilos para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}

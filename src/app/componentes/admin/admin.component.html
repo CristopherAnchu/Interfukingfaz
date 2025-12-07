@@ -3,46 +3,62 @@
         <img src="img/uleam_logo.png" alt="logo">
         <h1>Panel de Administración</h1>
         <p>Bienvenido <span>{{ currentUser?.nombre }} {{ currentUser?.apellido }}</span></p>
-        <button (click)="logout()" class="logout-button"> Cerrar sesión </button>
+        <div class="admin-header-actions">
+          <div class="language-selector-admin">
+            <button (click)="toggleLanguage()" class="lang-btn-admin" [title]="'Cambiar idioma'">
+              <mat-icon>language</mat-icon>
+              <span class="lang-text">{{ getCurrentLanguage() }}</span>
+            </button>
+            <div class="lang-dropdown-admin" *ngIf="isLanguageOpen">
+              <button (click)="changeLanguage('es')" [class.active]="currentLanguage === 'es'">
+                <span class="flag">ES</span> Español
+              </button>
+              <button (click)="changeLanguage('en')" [class.active]="currentLanguage === 'en'">
+                <span class="flag">EN</span> English
+              </button>
+            </div>
+          </div>
+          <button (click)="logout()" class="logout-button"> {{ i18n.translate('home.logout') }} </button>
+        </div>
     </header>
 
     <section class="add-user-section">
 
-        <h2>Añadir Usuario</h2>
+        <h2>{{ i18n.translate('admin.addUser') }}</h2>
 
         <form [formGroup]="addUserForm" (ngSubmit)="onSubmit()">
 
             <div class="form-group">
-                <label for="nombres">Nombres:</label>
-                <input type="text" id="nombres" formControlName="nombres" placeholder="Nombres" required>
+                <label for="nombres">{{ i18n.translate('admin.name') }}:</label>
+                <input type="text" id="nombres" formControlName="nombres" [placeholder]="i18n.translate('admin.name')" required>
             </div>
 
             <div class="form-group">
-                <label for="apellidos">Apellidos:</label>
-                <input type="text" id="apellidos" formControlName="apellidos" placeholder="Apellidos" required>
+                <label for="apellidos">{{ i18n.translate('admin.lastname') }}:</label>
+                <input type="text" id="apellidos" formControlName="apellidos" [placeholder]="i18n.translate('admin.lastname')" required>
             </div>
 
             <div class="form-group">
-                <label for="cedula">Número de Cédula:</label>
+                <label for="cedula">{{ i18n.translate('admin.id') }}:</label>
                 <input type="text" id="cedula" formControlName="cedula" placeholder="10 dígitos" maxlength="10" required>
             </div>
 
             <div class="form-group">
-                <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                <label for="fechaNacimiento">{{ i18n.translate('admin.birthdate') }}:</label>
                 <input type="date" id="fechaNacimiento" formControlName="fechaNacimiento" required>
             </div>
 
             <div class="form-group">
-                <label for="email">Email ULEAM:</label>
+                <label for="email">{{ i18n.translate('admin.email') }} ULEAM:</label>
                 <input type="email" id="email" formControlName="email" placeholder="eXXXXXXXXXXnombre@live.uleam.edu.ec" required>
             </div>
 
             <div class="form-group">
-                <label for="password">Contraseña:</label>
+                <label for="password">{{ i18n.translate('admin.password') }}:</label>
                 <input type="password" id="password" formControlName="password" required>
             </div>
 
-            <button type="submit" class="primary" [disabled]="addUserForm.invalid">Agregar Usuario</button>
+            <button type="submit" class="primary" [disabled]="addUserForm.invalid">{{ i18n.translate('admin.addUser') }}</button>
         </form>
 
         <div 
@@ -55,11 +71,11 @@
     </section>
 
     <section class="user-management-section">
-        <h2>Gestión de Usuarios</h2>
+        <h2>{{ i18n.translate('admin.title') }}</h2>
         
         <div class="search-bar">
             <input type="search"
-            placeholder="Buscar usuarios..."
+            [placeholder]="i18n.translate('admin.search')"
             (input)="onsearch($event)">
         </div>
 
@@ -95,7 +111,7 @@
                     </tr>
 
                     <tr *ngIf="filteredUsers.length===0">
-                        <td colspan="6" style="text-align: center;">No se encontraron usuarios.</td>
+                        <td colspan="6" style="text-align: center;">{{ i18n.translate('admin.noUsers') }}</td>
                     </tr>
 
                 </tbody>

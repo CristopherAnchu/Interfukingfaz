@@ -1,12 +1,14 @@
 //Importaciones de librerias de Angular
-import { Component } from '@angular/core'
+import { Component, HostListener } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { MatIconModule } from '@angular/material/icon'
 
 //Importaciones de los servicios
 import { AuthService } from '../../services/auth.service'
 import { UsersService } from '../../services/users.service'
 import { ValidationService } from '../../services/validation.service'
+import { I18nService, Language } from '../../services/i18n.service'
 
 //Importaciones de las interfaces
 import { UserSession } from '../../interfaces/users.interface';
@@ -15,7 +17,7 @@ import { Users } from '../../interfaces/users.interface'
 
 @Component({
   selector: 'app-admin',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
 })
@@ -26,6 +28,8 @@ export class AdminComponent {
   filteredUsers: Users[] = []
   searchTerm = ""
   message = ""
+  isLanguageOpen = false
+  currentLanguage: Language = 'es'
   messageType: "Success" | "Error" | "" = ""
 
   constructor(
@@ -33,6 +37,7 @@ export class AdminComponent {
     private authService: AuthService,
     private userService: UsersService,
     private validationService: ValidationService,
+    public i18n: I18nService
   ) { this.addUserForm = this.fb.group({
       nombres: ["", [Validators.required]],
       apellidos: ["", [Validators.required]],
@@ -40,13 +45,28 @@ export class AdminComponent {
       fechaNacimiento: ["", [Validators.required]], //Aqui se hizo un cambio
       email: ["", [Validators.required, Validators.email]],
       password: ["", [Validators.required]]
-    })
+    });
+    
+    // Suscribirse al cambio de idioma
+    this.i18n.language$.subscribe(lang => {
+      this.currentLanguage = lang;
+    });
   }
 
   //Funciones auxiliares privadas
   private showMessage(message: string, type: "Success" | "Error"): void {
     this.message = message
     this.messageType = type
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const languageSelector = document.querySelector('.language-selector-admin');
+    // Solo cerrar si el click fue fuera del selector Y no es en un botón dentro del selector
+    if (languageSelector && !languageSelector.contains(target) && !target.closest('.language-selector-admin')) {
+      this.isLanguageOpen = false;
+    }
   }
 
   //Filtrar los Usuarios
@@ -130,5 +150,19 @@ export class AdminComponent {
 
   public logout(): void {
     this.authService.logout()
+  }
+
+  // Métodos para cambio de idioma
+  toggleLanguage(): void {
+    this.isLanguageOpen = !this.isLanguageOpen;
+  }
+
+  changeLanguage(language: Language): void {
+    this.i18n.setLanguage(language);
+    this.isLanguageOpen = false;
+  }
+
+  getCurrentLanguage(): string {
+    return this.currentLanguage === 'es' ? 'ES' : 'EN';
   }
 }

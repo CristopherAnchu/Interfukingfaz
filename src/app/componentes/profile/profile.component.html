@@ -4,13 +4,27 @@
     <div class="header-left">
       <button (click)="goToFeed()" class="back-btn">
         <mat-icon>arrow_back</mat-icon>
-        Volver al Feed
+        {{ i18n.translate('profile.backToFeed') }}
       </button>
     </div>
     <div class="header-center">
-      <h1>Mi Perfil</h1>
+      <h1>{{ i18n.translate('profile.title') }}</h1>
     </div>
     <div class="header-right">
+      <div class="language-selector">
+        <button (click)="toggleLanguage()" class="lang-btn" [title]="'Cambiar idioma'">
+          <mat-icon>language</mat-icon>
+          <span class="lang-text">{{ getCurrentLanguage() }}</span>
+        </button>
+        <div class="lang-dropdown" *ngIf="isLanguageOpen">
+          <button (click)="changeLanguage('es')" [class.active]="currentLanguage === 'es'" class="lang-option">
+            <span class="flag">ES</span> Español
+          </button>
+          <button (click)="changeLanguage('en')" [class.active]="currentLanguage === 'en'" class="lang-option">
+            <span class="flag">EN</span> English
+          </button>
+        </div>
+      </div>
       <button (click)="logout()" class="icon-btn">
         <mat-icon>logout</mat-icon>
       </button>
@@ -48,10 +62,10 @@
   <!-- Projects View -->
   <main class="profile-main" *ngIf="!selectedProject">
     <div class="section-header">
-      <h3>Mis Proyectos</h3>
+      <h3>{{ i18n.translate('profile.myProjects') }}</h3>
       <button (click)="openCreateProjectModal()" class="btn-primary">
         <mat-icon>add</mat-icon>
-        Nuevo Proyecto
+        {{ i18n.translate('feed.createProject') }}
       </button>
     </div>
 
@@ -80,8 +94,8 @@
 
     <div *ngIf="userProjects.length === 0" class="empty-state">
       <mat-icon>work_off</mat-icon>
-      <p>No tienes proyectos aún</p>
-      <button (click)="openCreateProjectModal()" class="btn-primary">Crear mi primer proyecto</button>
+      <p>{{ i18n.translate('profile.noProjects') }}</p>
+      <button (click)="openCreateProjectModal()" class="btn-primary">{{ i18n.translate('feed.createProject') }}</button>
     </div>
   </main>
 

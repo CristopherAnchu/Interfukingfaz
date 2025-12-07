@@ -1,0 +1,93 @@
+<footer class="app-footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>
+        <mat-icon>school</mat-icon>
+        {{ i18n.translate('footer.institutional') }}
+      </h4>
+      <ul>
+        <li><a href="https://www.uleam.edu.ec" target="_blank" rel="noopener noreferrer">Portal ULEAM</a></li>
+        <li><a href="https://www.uleam.edu.ec/nosotros/" target="_blank" rel="noopener noreferrer">Sobre Nosotros</a></li>
+        <li><a href="https://www.uleam.edu.ec/facultades/" target="_blank" rel="noopener noreferrer">Facultades</a></li>
+        <li><a href="https://www.uleam.edu.ec/investigacion/" target="_blank" rel="noopener noreferrer">Investigación</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h4>
+        <mat-icon>support_agent</mat-icon>
+        {{ i18n.translate('footer.contact') }}
+      </h4>
+      <ul>
+        <li>
+          <mat-icon class="small-icon">email</mat-icon>
+          <a href="mailto:soporte.ti@uleam.edu.ec">soporte.ti@uleam.edu.ec</a>
+        </li>
+        <li>
+          <mat-icon class="small-icon">phone</mat-icon>
+          <span>(05) 2626769</span>
+        </li>
+        <li>
+          <mat-icon class="small-icon">location_on</mat-icon>
+          <span>Ciudadela Universitaria, Manta - Ecuador</span>
+        </li>
+        <li>
+          <mat-icon class="small-icon">schedule</mat-icon>
+          <span>Lunes a Viernes: 8:00 - 17:00</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h4>
+        <mat-icon>policy</mat-icon>
+        {{ i18n.translate('footer.privacy') }}
+      </h4>
+      <ul>
+        <li><a routerLink="/terms">{{ i18n.translate('footer.terms') }}</a></li>
+        <li><a routerLink="/privacy">{{ i18n.translate('footer.privacy') }}</a></li>
+        <li><a href="#" (click)="$event.preventDefault()">Protección de Datos</a></li>
+        <li><a href="#" (click)="$event.preventDefault()">Accesibilidad Web</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h4>
+        <mat-icon>link</mat-icon>
+        Enlaces Rápidos
+      </h4>
+      <ul>
+        <li><a href="https://biblioteca.uleam.edu.ec" target="_blank" rel="noopener noreferrer">Biblioteca Virtual</a></li>
+        <li><a href="https://aula.uleam.edu.ec" target="_blank" rel="noopener noreferrer">Aula Virtual</a></li>
+        <li><a href="https://correo.uleam.edu.ec" target="_blank" rel="noopener noreferrer">Webmail</a></li>
+        <li><a href="https://ayuda.uleam.edu.ec" target="_blank" rel="noopener noreferrer">Centro de Ayuda</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-logo">
+      <img src="img/uleam_logo.png" alt="ULEAM - Universidad Laica Eloy Alfaro de Manabí">
+    </div>
+    <div class="footer-text">
+      <p>© {{ currentYear }} Universidad Laica Eloy Alfaro de Manabí</p>
+      <p class="footer-small">
+        Sistema de Gestión Documental v1.0.0 | Desarrollado por Departamento de TI
+      </p>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.facebook.com/uleam.oficial" target="_blank" rel="noopener noreferrer" aria-label="Facebook ULEAM">
+        <mat-icon>facebook</mat-icon>
+      </a>
+      <a href="https://twitter.com/uleam_oficial" target="_blank" rel="noopener noreferrer" aria-label="Twitter ULEAM">
+        <mat-icon>alternate_email</mat-icon>
+      </a>
+      <a href="https://www.instagram.com/uleam_oficial" target="_blank" rel="noopener noreferrer" aria-label="Instagram ULEAM">
+        <mat-icon>photo_camera</mat-icon>
+      </a>
+      <a href="https://www.youtube.com/uleamoficial" target="_blank" rel="noopener noreferrer" aria-label="YouTube ULEAM">
+        <mat-icon>play_circle</mat-icon>
+      </a>
+    </div>
+  </div>
+</footer>

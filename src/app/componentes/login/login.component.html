@@ -1,8 +1,12 @@
 <body>
+    <div class="language-selector-wrapper">
+        <app-language-selector></app-language-selector>
+    </div>
+
     <div class="form-container">
         <div class="form-header">
             <img src="img/uleam_logo.png" alt="logo">
-            <h1>Inicio de sesión</h1>
+            <h1>{{ i18n.translate('login.title') }}</h1>
         </div>
 
         <form class="form-group" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
@@ -11,21 +15,35 @@
             type="email"
             id="email"
             formControlName="email"
-            placeholder="Correo electrónico" 
+            [placeholder]="i18n.translate('login.email')"
+            [attr.aria-label]="i18n.translate('login.email')"
             required>
 
             <input 
             type="password"
             id="password"
             formControlName="password"
-            placeholder="Contraseña"
+            [placeholder]="i18n.translate('login.password')"
+            [attr.aria-label]="i18n.translate('login.password')"
             required>
 
-            <button type="submit" [disabled]="loginForm.invalid">Iniciar sesión</button>
+            <button type="submit" [disabled]="loginForm.invalid || isAccountLocked">
+                {{ i18n.translate('login.submit') }}
+            </button>
         </form>
 
-        <div class="form-message" *ngIf="message" [ngClass]="messageType" >{{message}}</div>
+        <div class="form-message" *ngIf="message" [ngClass]="messageType">{{message}}</div>
 
+        <a class="forgot-password" routerLink="/password-recovery">
+            {{ i18n.translate('login.forgotPassword') }}
+        </a>
 
+        <div class="form-footer-links">
+            <a routerLink="/terms">{{ i18n.translate('footer.terms') }}</a>
+            <span>|</span>
+            <a routerLink="/privacy">{{ i18n.translate('footer.privacy') }}</a>
+        </div>
     </div>
+
+    <app-footer></app-footer>
 </body>

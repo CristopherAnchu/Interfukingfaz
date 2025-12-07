@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { ProjectService } from '../../services/project.service';
 import { DocumentService } from '../../services/document.service';
 import { UsersService } from '../../services/users.service';
+import { I18nService, Language } from '../../services/i18n.service';
 
 import { Project } from '../../interfaces/projects.interface';
 import { UserSession, Users } from '../../interfaces/users.interface';
@@ -29,6 +30,8 @@ export class ProfileComponent implements OnInit {
   showCreateProjectModal = false;
   showAddCollaboratorModal = false;
   showUploadDocumentModal = false;
+  isLanguageOpen = false;
+  currentLanguage: Language = 'es';
   
   createProjectForm: FormGroup;
   addCollaboratorForm: FormGroup;
@@ -47,7 +50,8 @@ export class ProfileComponent implements OnInit {
     private projectService: ProjectService,
     private documentService: DocumentService,
     private usersService: UsersService,
-    private router: Router
+    private router: Router,
+    public i18n: I18nService
   ) {
     this.createProjectForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -77,6 +81,21 @@ export class ProfileComponent implements OnInit {
     }
     this.loadUserProjects();
     this.allUsers = this.usersService.getAllUsers().filter(u => !u.isAdmin && u.email !== this.currentUser?.email);
+    
+    // Suscribirse al cambio de idioma
+    this.i18n.language$.subscribe(lang => {
+      this.currentLanguage = lang;
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const languageSelector = document.querySelector('.language-selector');
+    // Solo cerrar si el click fue fuera del selector Y no es en un botón dentro del selector
+    if (languageSelector && !languageSelector.contains(target) && !target.closest('.language-selector')) {
+      this.isLanguageOpen = false;
+    }
   }
 
   private loadUserProjects(): void {
@@ -304,5 +323,19 @@ export class ProfileComponent implements OnInit {
 
   public logout(): void {
     this.authService.logout();
+  }
+
+  // Métodos para cambio de idioma
+  toggleLanguage(): void {
+    this.isLanguageOpen = !this.isLanguageOpen;
+  }
+
+  changeLanguage(language: Language): void {
+    this.i18n.setLanguage(language);
+    this.isLanguageOpen = false;
+  }
+
+  getCurrentLanguage(): string {
+    return this.currentLanguage === 'es' ? 'ES' : 'EN';
   }
 }

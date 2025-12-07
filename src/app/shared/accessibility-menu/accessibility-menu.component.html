@@ -1,0 +1,98 @@
+<div class="accessibility-widget">
+  <button 
+    class="accessibility-trigger"
+    (click)="toggleMenu()"
+    [attr.aria-label]="'Menú de accesibilidad'"
+    [attr.aria-expanded]="isOpen">
+    <mat-icon>accessibility</mat-icon>
+  </button>
+
+  <div class="accessibility-panel" *ngIf="isOpen" [@slideIn]>
+    <div class="panel-header">
+      <h3>Accesibilidad</h3>
+      <button class="close-btn" (click)="toggleMenu()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="panel-content">
+      <div class="accessibility-option">
+        <div class="option-info">
+          <mat-icon>notifications_active</mat-icon>
+          <div class="option-text">
+            <strong>Alertas visuales</strong>
+            <small>Mostrar notificaciones en pantalla</small>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input 
+            type="checkbox"
+            [checked]="settings.visualAlerts"
+            (change)="toggleVisualAlerts()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="accessibility-option">
+        <div class="option-info">
+          <mat-icon>record_voice_over</mat-icon>
+          <div class="option-text">
+            <strong>Lectura por voz</strong>
+            <small>Lee el contenido en voz alta</small>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input 
+            type="checkbox"
+            [checked]="settings.voiceReader"
+            (change)="toggleVoiceReader()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="accessibility-option">
+        <div class="option-info">
+          <mat-icon>contrast</mat-icon>
+          <div class="option-text">
+            <strong>Modo alto contraste</strong>
+            <small>Mejora la visibilidad del texto</small>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input 
+            type="checkbox"
+            [checked]="settings.highContrast"
+            (change)="toggleHighContrast()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="accessibility-option">
+        <div class="option-info">
+          <mat-icon>text_fields</mat-icon>
+          <div class="option-text">
+            <strong>Texto ampliado</strong>
+            <small>Aumenta el tamaño de fuente</small>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input 
+            type="checkbox"
+            [checked]="settings.largeText"
+            (change)="toggleLargeText()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="keyboard-shortcuts">
+        <h4>Atajos de teclado</h4>
+        <ul>
+          <li><kbd>Alt</kbd> + <kbd>M</kbd> - Menú principal</li>
+          <li><kbd>Alt</kbd> + <kbd>H</kbd> - Inicio</li>
+          <li><kbd>Alt</kbd> + <kbd>F</kbd> - Feed</li>
+          <li><kbd>Alt</kbd> + <kbd>A</kbd> - Accesibilidad</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

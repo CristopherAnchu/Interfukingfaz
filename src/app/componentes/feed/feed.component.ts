@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { ProjectService } from '../../services/project.service';
 import { UsersService } from '../../services/users.service';
 import { DocumentService } from '../../services/document.service';
+import { I18nService, Language } from '../../services/i18n.service';
 
 import { Project, ProjectPost } from '../../interfaces/projects.interface';
 import { UserSession, Users } from '../../interfaces/users.interface';
@@ -29,6 +30,8 @@ export class FeedComponent implements OnInit {
   activeTab: 'feed' | 'projects' | 'users' = 'feed';
   showCreateProjectModal = false;
   showCreatePostModal = false;
+  isLanguageOpen = false;
+  currentLanguage: Language = 'es';
   
   createProjectForm: FormGroup;
   createPostForm: FormGroup;
@@ -48,7 +51,8 @@ export class FeedComponent implements OnInit {
     private projectService: ProjectService,
     private usersService: UsersService,
     private documentService: DocumentService,
-    private router: Router
+    private router: Router,
+    public i18n: I18nService
   ) {
     this.createProjectForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -74,6 +78,21 @@ export class FeedComponent implements OnInit {
       return;
     }
     this.loadData();
+    
+    // Suscribirse al cambio de idioma
+    this.i18n.language$.subscribe(lang => {
+      this.currentLanguage = lang;
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const languageSelector = document.querySelector('.language-selector');
+    // Solo cerrar si el click fue fuera del selector Y no es en un botón dentro del selector
+    if (languageSelector && !languageSelector.contains(target) && !target.closest('.language-selector')) {
+      this.isLanguageOpen = false;
+    }
   }
 
   private loadData(): void {
@@ -283,5 +302,19 @@ export class FeedComponent implements OnInit {
 
   public logout(): void {
     this.authService.logout();
+  }
+
+  // Métodos para cambio de idioma
+  toggleLanguage(): void {
+    this.isLanguageOpen = !this.isLanguageOpen;
+  }
+
+  changeLanguage(language: Language): void {
+    this.i18n.setLanguage(language);
+    this.isLanguageOpen = false;
+  }
+
+  getCurrentLanguage(): string {
+    return this.currentLanguage === 'es' ? 'ES' : 'EN';
   }
 }

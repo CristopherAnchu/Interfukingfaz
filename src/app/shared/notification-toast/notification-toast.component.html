@@ -1,0 +1,18 @@
+<div class="toast-container">
+  <div 
+    *ngFor="let notification of notifications"
+    class="toast"
+    [ngClass]="'toast-' + notification.type"
+    [@slideIn]>
+    <div class="toast-icon">
+      <mat-icon>{{ getIcon(notification.type) }}</mat-icon>
+    </div>
+    <div class="toast-content">
+      <p class="toast-message">{{ notification.message }}</p>
+      <span class="toast-time">{{ notification.timestamp | date:'short' }}</span>
+    </div>
+    <button class="toast-close" (click)="removeNotification(notification.id)">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

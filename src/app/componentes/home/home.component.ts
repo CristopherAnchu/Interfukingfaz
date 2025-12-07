@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { UsersService } from '../../services/users.service';
 import { DocumentService } from '../../services/document.service';
 import { AuthService } from '../../services/auth.service';
+import { I18nService, Language } from '../../services/i18n.service';
 
 //Importaciones de interfaces
 import { DocumentsInterface } from '../../interfaces/documents.interface';
@@ -39,6 +40,10 @@ export class HomeComponent {
   showTagsFilter = false
   showDocumentModal = false
   showContextMenu = false
+  isLanguageOpen = false
+
+  //Idioma
+  currentLanguage: Language = 'es'
 
   //Modelos y menu de contexto
   selectedDocument: DocumentsInterface | null = null
@@ -69,7 +74,8 @@ export class HomeComponent {
     private authService: AuthService,
     private documentService: DocumentService,
     private usersService: UsersService,
-    private router: Router
+    private router: Router,
+    public i18n: I18nService
   ){
     this.uploadForm = this.fb.group({
       numero: ["", Validators.required],
@@ -95,12 +101,18 @@ export class HomeComponent {
     this.loadDocuments()
     this.loadtags()
     this.updateNotifications()
+    
+    // Suscribirse al cambio de idioma
+    this.i18n.language$.subscribe(lang => {
+      this.currentLanguage = lang
+    })
   }
 
   @HostListener("document:click", ["$event"])
   public onDocumentClick(event: MouseEvent): void {
     this.showContextMenu = false
     this.showAutocomplete = false
+    this.isLanguageOpen = false
   }
 
   //Metodo de navegacion
@@ -390,6 +402,20 @@ export class HomeComponent {
 
   public logout(): void {
     this.authService.logout()
+  }
+
+  // Métodos para cambio de idioma
+  toggleLanguage(): void {
+    this.isLanguageOpen = !this.isLanguageOpen
+  }
+
+  changeLanguage(language: Language): void {
+    this.i18n.setLanguage(language)
+    this.isLanguageOpen = false
+  }
+
+  getCurrentLanguage(): string {
+    return this.currentLanguage === 'es' ? 'ES' : 'EN'
   }
 
 }

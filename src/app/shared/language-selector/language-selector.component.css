@@ -1,0 +1,120 @@
+.language-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.language-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.language-trigger:hover {
+  background-color: #f5f5f5;
+  border-color: #c00;
+}
+
+.flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.lang-code {
+  font-weight: 600;
+  color: #333;
+}
+
+.dropdown-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #666;
+}
+
+.language-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out;
+  z-index: 1000;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: left;
+}
+
+.language-option:hover {
+  background-color: #f5f5f5;
+}
+
+.language-option.active {
+  background-color: #fff0f0;
+}
+
+.lang-name {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+.check-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #c00;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .language-trigger {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+
+  .flag {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .language-trigger .lang-code {
+    display: none;
+  }
+
+  .language-trigger {
+    padding: 6px 8px;
+  }
+}
