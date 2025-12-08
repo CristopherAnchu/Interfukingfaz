@@ -153,4 +153,20 @@ export class UsersService {
     }
   }
 
+  //Funcion para actualizar la contraseña de un usuario
+  public updateUserPassword(email: string, newPassword: string): boolean {
+    const users = this.storage.getUsers()
+    const userIndex = users.findIndex((user) => user.email === email)
+
+    if (userIndex !== -1) {
+      users[userIndex].password = newPassword
+      this.storage.setUsers(users)
+      console.log(`Contraseña actualizada para el usuario: ${email}`)
+      return true
+    }
+
+    console.log(`Usuario no encontrado: ${email}`)
+    return false
+  }
+
 }
