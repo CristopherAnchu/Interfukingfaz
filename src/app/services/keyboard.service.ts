@@ -151,16 +151,6 @@ export class KeyboardService {
       description: 'Ir a Perfil'
     });
 
-    // Alt + A - Ir a Admin
-    this.registerShortcut({
-      key: 'a',
-      altKey: true,
-      action: () => {
-        this.router.navigate(['/admin']);
-      },
-      description: 'Ir a Administración'
-    });
-
     // Escape - Cerrar modales/menús
     this.registerShortcut({
       key: 'escape',
