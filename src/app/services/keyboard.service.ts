@@ -2,6 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { AccessibilityService } from './accessibility.service';
 
 export interface KeyboardShortcut {
   key: string;
@@ -19,10 +20,13 @@ export class KeyboardService {
   private shortcuts: Map<string, KeyboardShortcut> = new Map();
   private shortcutTriggered = new Subject<string>();
   public shortcutTriggered$ = this.shortcutTriggered.asObservable();
+  private listenerAttached = false;
+  private boundHandleKeyPress: ((event: KeyboardEvent) => void) | null = null;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private router: Router
+    private router: Router,
+    private accessibilityService: AccessibilityService
   ) {
     if (isPlatformBrowser(this.platformId)) {
       this.initializeGlobalListener();
@@ -31,15 +35,30 @@ export class KeyboardService {
   }
 
   private initializeGlobalListener(): void {
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-      this.handleKeyPress(event);
-    });
+    if (this.listenerAttached) {
+      return;
+    }
+
+    this.boundHandleKeyPress = (event: KeyboardEvent) => this.handleKeyPress(event);
+    document.addEventListener('keydown', this.boundHandleKeyPress, true);
+    this.listenerAttached = true;
   }
 
   private handleKeyPress(event: KeyboardEvent): void {
-    // Ignorar si está escribiendo en un input/textarea
+    // Verificar si la navegación por teclado está habilitada
+    const settings = this.accessibilityService.getSettings();
+    if (!settings.keyboardNavigation) {
+      return;
+    }
+
+    // Ignorar si está escribiendo en campos editables
     const target = event.target as HTMLElement;
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+    const isEditable = target.tagName === 'INPUT' || 
+                      target.tagName === 'TEXTAREA' || 
+                      target.isContentEditable ||
+                      target.getAttribute('contenteditable') === 'true';
+    
+    if (isEditable) {
       return;
     }
 
@@ -48,8 +67,14 @@ export class KeyboardService {
 
     if (shortcut) {
       event.preventDefault();
-      shortcut.action();
-      this.shortcutTriggered.next(shortcut.description);
+      event.stopPropagation();
+      try {
+        shortcut.action();
+        this.shortcutTriggered.next(shortcut.description);
+        this.accessibilityService.speak(shortcut.description);
+      } catch (error) {
+        console.error('Error executing shortcut:', error);
+      }
     }
   }
 
@@ -58,11 +83,19 @@ export class KeyboardService {
     if (event.ctrlKey) parts.push('ctrl');
     if (event.altKey) parts.push('alt');
     if (event.shiftKey) parts.push('shift');
-    parts.push(event.key.toLowerCase());
+    
+    // Normalizar la tecla
+    const key = event.key.toLowerCase();
+    parts.push(key);
+    
     return parts.join('+');
   }
 
   public registerShortcut(shortcut: KeyboardShortcut): void {
+    if (!shortcut || !shortcut.key || !shortcut.action) {
+      console.error('Invalid shortcut configuration');
+      return;
+    }
     const key = this.generateShortcutKey(shortcut);
     this.shortcuts.set(key, shortcut);
   }
@@ -85,20 +118,26 @@ export class KeyboardService {
     return Array.from(this.shortcuts.values());
   }
 
-  private registerDefaultShortcuts(): void {
-    // Alt + H - Ir a Home
-    this.registerShortcut({
-      key: 'h',
-      altKey: true,
-      action: () => this.router.navigate(['/home']),
-      description: 'Ir a Inicio'
-    });
+  public destroy(): void {
+    if (this.boundHandleKeyPress && this.listenerAttached) {
+      document.removeEventListener('keydown', this.boundHandleKeyPress, true);
+      this.listenerAttached = false;
+    }
+    this.shortcuts.clear();
+  }
 
-    // Alt + F - Ir a Feed
+  public isEnabled(): boolean {
+    return this.accessibilityService.getSettings().keyboardNavigation;
+  }
+
+  private registerDefaultShortcuts(): void {
+    // Alt + F - Ir a Feed (página principal)
     this.registerShortcut({
       key: 'f',
       altKey: true,
-      action: () => this.router.navigate(['/feed']),
+      action: () => {
+        this.router.navigate(['/feed']);
+      },
       description: 'Ir a Feed'
     });
 
@@ -106,52 +145,58 @@ export class KeyboardService {
     this.registerShortcut({
       key: 'p',
       altKey: true,
-      action: () => this.router.navigate(['/profile']),
+      action: () => {
+        this.router.navigate(['/profile']);
+      },
       description: 'Ir a Perfil'
     });
 
-    // Alt + A - Toggle menú de accesibilidad
+    // Alt + A - Ir a Admin
     this.registerShortcut({
       key: 'a',
       altKey: true,
       action: () => {
-        const accessibilityBtn = document.querySelector('.accessibility-trigger') as HTMLButtonElement;
-        if (accessibilityBtn) accessibilityBtn.click();
+        this.router.navigate(['/admin']);
       },
-      description: 'Abrir Accesibilidad'
-    });
-
-    // Alt + L - Toggle selector de idioma
-    this.registerShortcut({
-      key: 'l',
-      altKey: true,
-      action: () => {
-        const langBtn = document.querySelector('.language-trigger') as HTMLButtonElement;
-        if (langBtn) langBtn.click();
-      },
-      description: 'Cambiar Idioma'
+      description: 'Ir a Administración'
     });
 
     // Escape - Cerrar modales/menús
     this.registerShortcut({
       key: 'escape',
       action: () => {
-        // Emitir evento para cerrar modales
         const event = new CustomEvent('closeModals');
         document.dispatchEvent(event);
+        
+        // Cerrar menú de accesibilidad si está abierto
+        const accessibilityPanel = document.querySelector('.accessibility-panel');
+        if (accessibilityPanel) {
+          const closeBtn = accessibilityPanel.querySelector('.close-btn') as HTMLButtonElement;
+          if (closeBtn) {
+            closeBtn.click();
+          }
+        }
       },
-      description: 'Cerrar Modal'
+      description: 'Cerrar menús'
     });
 
-    // Ctrl + K - Búsqueda rápida
+    // Ctrl + / - Mostrar ayuda de atajos
     this.registerShortcut({
-      key: 'k',
+      key: '/',
       ctrlKey: true,
       action: () => {
-        const searchInput = document.querySelector('input[type="search"]') as HTMLInputElement;
-        if (searchInput) searchInput.focus();
+        const accessibilityBtn = document.querySelector('.accessibility-trigger') as HTMLButtonElement;
+        if (accessibilityBtn) {
+          accessibilityBtn.click();
+          setTimeout(() => {
+            const shortcutsSection = document.querySelector('.keyboard-shortcuts');
+            if (shortcutsSection) {
+              shortcutsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 100);
+        }
       },
-      description: 'Búsqueda Rápida'
+      description: 'Mostrar ayuda de atajos'
     });
   }
 }

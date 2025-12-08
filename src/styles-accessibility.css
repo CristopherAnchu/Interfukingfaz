@@ -85,7 +85,7 @@
 
 /* Focus visible mejorado para navegación por teclado */
 *:focus-visible {
-  outline: 3px solid #c00;
+  outline: 3px solid #2196f3;
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -95,8 +95,36 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid #c00;
+  outline: 3px solid #2196f3;
   outline-offset: 2px;
+}
+
+/* Estilos cuando navegación por teclado está habilitada */
+:root.keyboard-navigation-enabled *:focus {
+  outline: 3px solid #2196f3 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.2);
+}
+
+:root.keyboard-navigation-enabled button:focus,
+:root.keyboard-navigation-enabled a:focus,
+:root.keyboard-navigation-enabled [role="button"]:focus {
+  outline: 3px solid #2196f3 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 4px rgba(33, 150, 243, 0.3);
+  z-index: 1;
+}
+
+/* Alto contraste con navegación por teclado */
+:root.high-contrast.keyboard-navigation-enabled *:focus {
+  outline: 4px solid #ff0 !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 6px rgba(255, 255, 0, 0.3);
+}
+
+/* Ocultar outline cuando no se usa teclado */
+:root:not(.keyboard-navigation-enabled) *:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Skip to content link para accesibilidad */

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { AccessibilityService, AccessibilitySettings } from '../../services/accessibility.service';
@@ -9,7 +9,7 @@ import { AccessibilityService, AccessibilitySettings } from '../../services/acce
   templateUrl: './accessibility-menu.component.html',
   styleUrl: './accessibility-menu.component.css'
 })
-export class AccessibilityMenuComponent implements OnInit {
+export class AccessibilityMenuComponent implements OnInit, OnDestroy {
   isOpen = false;
   settings: AccessibilitySettings = {
     visualAlerts: true,
@@ -19,12 +19,28 @@ export class AccessibilityMenuComponent implements OnInit {
     keyboardNavigation: true
   };
 
+  private closeModalListener: ((event: Event) => void) | null = null;
+
   constructor(private accessibilityService: AccessibilityService) {}
 
   ngOnInit(): void {
     this.accessibilityService.settings$.subscribe(
       settings => this.settings = settings
     );
+
+    // Listener para cerrar con Escape
+    this.closeModalListener = (event: Event) => {
+      if (this.isOpen) {
+        this.isOpen = false;
+      }
+    };
+    document.addEventListener('closeModals', this.closeModalListener);
+  }
+
+  ngOnDestroy(): void {
+    if (this.closeModalListener) {
+      document.removeEventListener('closeModals', this.closeModalListener);
+    }
   }
 
   toggleMenu(): void {
@@ -54,5 +70,9 @@ export class AccessibilityMenuComponent implements OnInit {
     this.accessibilityService.toggleLargeText();
     const status = !this.settings.largeText ? 'activado' : 'desactivado';
     this.accessibilityService.speak(`Texto ampliado ${status}`);
+  }
+
+  toggleKeyboardNavigation(): void {
+    this.accessibilityService.toggleKeyboardNavigation();
   }
 }

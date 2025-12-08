@@ -83,6 +83,14 @@ export class FeedComponent implements OnInit {
     this.i18n.language$.subscribe(lang => {
       this.currentLanguage = lang;
     });
+
+    // Escuchar evento de cerrar modales (desde atajos de teclado)
+    document.addEventListener('closeModals', () => {
+      this.showCreateProjectModal = false;
+      this.showCreatePostModal = false;
+      this.isLanguageOpen = false;
+      this.showCommentBox = {};
+    });
   }
 
   @HostListener('document:click', ['$event'])

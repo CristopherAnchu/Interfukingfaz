@@ -76,9 +76,30 @@ export class AccessibilityService {
     this.updateSettings({ largeText: !current.largeText });
   }
 
+  public toggleKeyboardNavigation(): void {
+    const current = this.getSettings();
+    const newValue = !current.keyboardNavigation;
+    this.updateSettings({ keyboardNavigation: newValue });
+    
+    if (newValue) {
+      this.speak('Navegación por teclado activada');
+    } else {
+      this.speak('Navegación por teclado desactivada');
+    }
+  }
+
   public speak(text: string): void {
+    if (!text || text.trim() === '') {
+      return;
+    }
+
     const settings = this.getSettings();
-    if (!settings.voiceReader || !('speechSynthesis' in window)) {
+    if (!settings.voiceReader) {
+      return;
+    }
+
+    if (!('speechSynthesis' in window)) {
+      console.warn('Speech synthesis not supported in this browser');
       return;
     }
 
@@ -86,13 +107,20 @@ export class AccessibilityService {
       // Cancelar cualquier lectura en curso
       window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'es-ES'; // Puede cambiar según el idioma de la app
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      utterance.volume = 1;
+      // Pequeño delay para asegurar que la cancelación se complete
+      setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
 
-      window.speechSynthesis.speak(utterance);
+        utterance.onerror = (event) => {
+          console.error('Speech synthesis error:', event);
+        };
+
+        window.speechSynthesis.speak(utterance);
+      }, 50);
     } catch (error) {
       console.error('Error with speech synthesis', error);
     }
@@ -105,6 +133,10 @@ export class AccessibilityService {
   }
 
   private applySettings(): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     const settings = this.getSettings();
     const root = document.documentElement;
 
@@ -120,6 +152,15 @@ export class AccessibilityService {
       root.classList.add('large-text');
     } else {
       root.classList.remove('large-text');
+    }
+
+    // Aplicar indicador de navegación por teclado
+    if (settings.keyboardNavigation) {
+      root.classList.add('keyboard-navigation-enabled');
+      root.setAttribute('data-keyboard-nav', 'true');
+    } else {
+      root.classList.remove('keyboard-navigation-enabled');
+      root.setAttribute('data-keyboard-nav', 'false');
     }
   }
 }

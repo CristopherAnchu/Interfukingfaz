@@ -2,12 +2,13 @@
   <button 
     class="accessibility-trigger"
     (click)="toggleMenu()"
-    [attr.aria-label]="'Menú de accesibilidad'"
-    [attr.aria-expanded]="isOpen">
-    <mat-icon>accessibility</mat-icon>
+    [attr.aria-label]="isOpen ? 'Cerrar menú de accesibilidad' : 'Abrir menú de accesibilidad'"
+    [attr.aria-expanded]="isOpen"
+    type="button">
+    <mat-icon aria-hidden="true">accessibility</mat-icon>
   </button>
 
-  <div class="accessibility-panel" *ngIf="isOpen" [@slideIn]>
+  <div class="accessibility-panel" *ngIf="isOpen">
     <div class="panel-header">
       <h3>Accesibilidad</h3>
       <button class="close-btn" (click)="toggleMenu()">
@@ -84,13 +85,31 @@
         </label>
       </div>
 
+      <div class="accessibility-option">
+        <div class="option-info">
+          <mat-icon>keyboard</mat-icon>
+          <div class="option-text">
+            <strong>Navegación por teclado</strong>
+            <small>Habilitar atajos de teclado</small>
+          </div>
+        </div>
+        <label class="toggle-switch">
+          <input 
+            type="checkbox"
+            [checked]="settings.keyboardNavigation"
+            (change)="toggleKeyboardNavigation()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
       <div class="keyboard-shortcuts">
         <h4>Atajos de teclado</h4>
         <ul>
-          <li><kbd>Alt</kbd> + <kbd>M</kbd> - Menú principal</li>
-          <li><kbd>Alt</kbd> + <kbd>H</kbd> - Inicio</li>
-          <li><kbd>Alt</kbd> + <kbd>F</kbd> - Feed</li>
-          <li><kbd>Alt</kbd> + <kbd>A</kbd> - Accesibilidad</li>
+          <li><kbd>Alt</kbd> + <kbd>F</kbd> - Ir a Feed</li>
+          <li><kbd>Alt</kbd> + <kbd>P</kbd> - Ir a Perfil</li>
+          <li><kbd>Alt</kbd> + <kbd>A</kbd> - Ir a Admin</li>
+          <li><kbd>Ctrl</kbd> + <kbd>/</kbd> - Ver esta ayuda</li>
+          <li><kbd>Escape</kbd> - Cerrar menús</li>
         </ul>
       </div>
     </div>

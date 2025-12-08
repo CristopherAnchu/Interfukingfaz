@@ -25,6 +25,5 @@ export const routes: Routes = [
     {path: "admin", component: AdminComponent, canActivate:[loginGuard, adminGuard]},
     {path: "feed", component: FeedComponent, canActivate:[loginGuard]},
     {path: "profile", component: ProfileComponent, canActivate:[loginGuard]},
-    {path: "home", component: HomeComponent, canActivate:[loginGuard]},
     {path: "**", redirectTo: "login"},
 ];
