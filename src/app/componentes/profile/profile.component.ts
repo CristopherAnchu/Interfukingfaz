@@ -1,8 +1,9 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
+import { ProgressBarComponent } from '../../shared/progress-bar/progress-bar.component';
 
 import { AuthService } from '../../services/auth.service';
 import { ProjectService } from '../../services/project.service';
@@ -16,7 +17,7 @@ import { DocumentsInterface } from '../../interfaces/documents.interface';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, ProgressBarComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -38,6 +39,9 @@ export class ProfileComponent implements OnInit {
   showNewPassword = false;
   showConfirmPassword = false;
   
+  uploadProgress = 0;
+  isUploading = false;
+  
   createProjectForm: FormGroup;
   addCollaboratorForm: FormGroup;
   uploadDocumentForm: FormGroup;
@@ -57,7 +61,8 @@ export class ProfileComponent implements OnInit {
     private documentService: DocumentService,
     private usersService: UsersService,
     private router: Router,
-    public i18n: I18nService
+    public i18n: I18nService,
+    private cdr: ChangeDetectorRef
   ) {
     this.createProjectForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -266,8 +271,11 @@ export class ProfileComponent implements OnInit {
   }
 
   public closeUploadDocumentModal(): void {
-    this.showUploadDocumentModal = false;
-    this.uploadDocumentForm.reset();
+    if (!this.isUploading) {
+      this.showUploadDocumentModal = false;
+      this.uploadDocumentForm.reset();
+      this.uploadProgress = 0;
+    }
   }
 
   public onFileSelected(event: Event): void {
@@ -279,31 +287,54 @@ export class ProfileComponent implements OnInit {
 
   public onUploadDocument(): void {
     if (this.uploadDocumentForm.valid && this.currentUser && this.selectedProject) {
-      const formData = this.uploadDocumentForm.value;
+      this.isUploading = true;
+      this.uploadProgress = 0;
+      this.cdr.detectChanges();
+      
+      // Simular progreso de subida
+      const progressInterval = setInterval(() => {
+        this.uploadProgress += 10;
+        this.cdr.detectChanges();
+        
+        if (this.uploadProgress >= 100) {
+          clearInterval(progressInterval);
+          
+          const formData = this.uploadDocumentForm.value;
 
-      const documentData = {
-        numero: formData.numero,
-        tipo: formData.tipo,
-        asunto: formData.asunto,
-        quienSube: `${this.currentUser.nombre} ${this.currentUser.apellido} (${this.currentUser.email})`,
-        quienSubeEmail: this.currentUser.email,
-        paraQuienEs: this.selectedProject.nombre,
-        paraQuienEsEmail: this.selectedProject.id,
-        fileName: formData.file.name,
-        fileType: formData.file.type || 'unknown',
-        etiquetas: formData.etiquetas,
-      };
+          const documentData = {
+            numero: formData.numero,
+            tipo: formData.tipo,
+            asunto: formData.asunto,
+            quienSube: `${this.currentUser!.nombre} ${this.currentUser!.apellido} (${this.currentUser!.email})`,
+            quienSubeEmail: this.currentUser!.email,
+            paraQuienEs: this.selectedProject!.nombre,
+            paraQuienEsEmail: this.selectedProject!.id,
+            fileName: formData.file.name,
+            fileType: formData.file.type || 'unknown',
+            etiquetas: formData.etiquetas,
+          };
 
-      const result = this.documentService.addDocument(documentData);
+          const result = this.documentService.addDocument(documentData);
 
-      if (result.success && result.document) {
-        this.projectService.addDocumentToProject(this.selectedProject.id, result.document.id);
-        this.showMessage('Documento agregado exitosamente', 'Success');
-        this.closeUploadDocumentModal();
-        this.loadProjectDocuments();
-      } else {
-        this.showMessage(result.message, 'Error');
-      }
+          if (result.success && result.document) {
+            this.projectService.addDocumentToProject(this.selectedProject!.id, result.document.id);
+            this.showMessage('Documento agregado exitosamente', 'Success');
+            
+            // Resetear estado y cerrar modal
+            setTimeout(() => {
+              this.isUploading = false;
+              this.uploadProgress = 0;
+              this.showUploadDocumentModal = false;
+              this.uploadDocumentForm.reset();
+              this.loadProjectDocuments();
+            }, 500);
+          } else {
+            this.showMessage(result.message, 'Error');
+            this.isUploading = false;
+            this.uploadProgress = 0;
+          }
+        }
+      }, 150);
     }
   }
 

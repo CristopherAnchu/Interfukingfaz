@@ -281,11 +281,11 @@
 </div>
 
 <!-- Upload Document Modal -->
-<div *ngIf="showUploadDocumentModal" class="modal-overlay" (click)="closeUploadDocumentModal()">
+<div *ngIf="showUploadDocumentModal" class="modal-overlay" (click)="!isUploading && closeUploadDocumentModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h2>Subir Documento</h2>
-      <button (click)="closeUploadDocumentModal()" class="close-btn">
+      <button (click)="closeUploadDocumentModal()" class="close-btn" [disabled]="isUploading">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -310,9 +310,24 @@
         <label for="etiquetas">Etiquetas (separadas por comas)</label>
         <input type="text" id="etiquetas" formControlName="etiquetas" placeholder="informe, tesis">
       </div>
+      
+      <!-- Barra de progreso -->
+      <div class="upload-progress" *ngIf="isUploading">
+        <app-progress-bar 
+          [progress]="uploadProgress" 
+          label="Subiendo archivo..."
+          color="#d32f2f"
+          height="10px"
+          [animated]="true">
+        </app-progress-bar>
+      </div>
+      
       <div class="modal-actions">
-        <button type="button" (click)="closeUploadDocumentModal()" class="btn-secondary">Cancelar</button>
-        <button type="submit" [disabled]="uploadDocumentForm.invalid" class="btn-primary">Subir</button>
+        <button type="button" (click)="closeUploadDocumentModal()" class="btn-secondary" [disabled]="isUploading">Cancelar</button>
+        <button type="submit" [disabled]="uploadDocumentForm.invalid || isUploading" class="btn-primary">
+          <span *ngIf="!isUploading">Subir</span>
+          <span *ngIf="isUploading">Subiendo...</span>
+        </button>
       </div>
     </form>
   </div>
