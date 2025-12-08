@@ -30,12 +30,18 @@ export class ProfileComponent implements OnInit {
   showCreateProjectModal = false;
   showAddCollaboratorModal = false;
   showUploadDocumentModal = false;
+  showChangePasswordModal = false;
   isLanguageOpen = false;
   currentLanguage: Language = 'es';
+  
+  showCurrentPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
   
   createProjectForm: FormGroup;
   addCollaboratorForm: FormGroup;
   uploadDocumentForm: FormGroup;
+  changePasswordForm: FormGroup;
   
   allUsers: Users[] = [];
   autocompleteUsers: Users[] = [];
@@ -71,6 +77,18 @@ export class ProfileComponent implements OnInit {
       file: [null, Validators.required],
       etiquetas: ['']
     });
+
+    this.changePasswordForm = this.fb.group({
+      currentPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
+    }, { validators: this.passwordMatchValidator });
+  }
+
+  private passwordMatchValidator(group: FormGroup): { [key: string]: boolean } | null {
+    const newPassword = group.get('newPassword')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+    return newPassword === confirmPassword ? null : { passwordMismatch: true };
   }
 
   ngOnInit(): void {
@@ -315,6 +333,46 @@ export class ProfileComponent implements OnInit {
 
   public isProjectOwner(): boolean {
     return this.selectedProject?.creadorEmail === this.currentUser?.email;
+  }
+
+  public openChangePasswordModal(): void {
+    this.showChangePasswordModal = true;
+  }
+
+  public closeChangePasswordModal(): void {
+    this.showChangePasswordModal = false;
+    this.changePasswordForm.reset();
+    this.showCurrentPassword = false;
+    this.showNewPassword = false;
+    this.showConfirmPassword = false;
+  }
+
+  public onChangePassword(): void {
+    if (this.changePasswordForm.valid && this.currentUser) {
+      const { currentPassword, newPassword } = this.changePasswordForm.value;
+      
+      // Verificar contraseña actual
+      const user = this.usersService.getUserByEmail(this.currentUser.email);
+      if (!user) {
+        this.showMessage('Usuario no encontrado', 'Error');
+        return;
+      }
+
+      if (user.password !== currentPassword) {
+        this.showMessage('La contraseña actual es incorrecta', 'Error');
+        return;
+      }
+
+      // Actualizar contraseña
+      const success = this.usersService.updateUserPassword(this.currentUser.email, newPassword);
+      
+      if (success) {
+        this.showMessage('Contraseña cambiada exitosamente', 'Success');
+        this.closeChangePasswordModal();
+      } else {
+        this.showMessage('Error al cambiar la contraseña', 'Error');
+      }
+    }
   }
 
   public goToFeed(): void {

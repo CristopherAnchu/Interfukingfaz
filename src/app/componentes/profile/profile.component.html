@@ -51,6 +51,11 @@
       </div>
     </div>
 
+    <button (click)="openChangePasswordModal()" class="btn-change-password">
+      <mat-icon>lock</mat-icon>
+      Cambiar Contraseña
+    </button>
+
     <div class="user-stats">
       <div class="stat">
         <span class="stat-number">{{ userProjects.length }}</span>
@@ -308,6 +313,88 @@
       <div class="modal-actions">
         <button type="button" (click)="closeUploadDocumentModal()" class="btn-secondary">Cancelar</button>
         <button type="submit" [disabled]="uploadDocumentForm.invalid" class="btn-primary">Subir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div *ngIf="showChangePasswordModal" class="modal-overlay" (click)="closeChangePasswordModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Cambiar Contraseña</h2>
+      <button (click)="closeChangePasswordModal()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <form [formGroup]="changePasswordForm" (ngSubmit)="onChangePassword()">
+      <div class="form-group">
+        <label for="currentPassword">Contraseña Actual</label>
+        <div class="password-input-group">
+          <input 
+            [type]="showCurrentPassword ? 'text' : 'password'" 
+            id="currentPassword" 
+            formControlName="currentPassword" 
+            required>
+          <button 
+            type="button" 
+            class="toggle-password-btn"
+            (click)="showCurrentPassword = !showCurrentPassword">
+            <mat-icon>{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+        <span class="error-text" *ngIf="changePasswordForm.get('currentPassword')?.touched && changePasswordForm.get('currentPassword')?.invalid">
+          Contraseña actual requerida
+        </span>
+      </div>
+      
+      <div class="form-group">
+        <label for="newPassword">Nueva Contraseña</label>
+        <div class="password-input-group">
+          <input 
+            [type]="showNewPassword ? 'text' : 'password'" 
+            id="newPassword" 
+            formControlName="newPassword" 
+            required>
+          <button 
+            type="button" 
+            class="toggle-password-btn"
+            (click)="showNewPassword = !showNewPassword">
+            <mat-icon>{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+        <span class="error-text" *ngIf="changePasswordForm.get('newPassword')?.touched && changePasswordForm.get('newPassword')?.invalid">
+          La contraseña debe tener al menos 6 caracteres
+        </span>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+        <div class="password-input-group">
+          <input 
+            [type]="showConfirmPassword ? 'text' : 'password'" 
+            id="confirmPassword" 
+            formControlName="confirmPassword" 
+            required>
+          <button 
+            type="button" 
+            class="toggle-password-btn"
+            (click)="showConfirmPassword = !showConfirmPassword">
+            <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+        <span class="error-text" *ngIf="changePasswordForm.get('confirmPassword')?.touched && changePasswordForm.errors?.['passwordMismatch']">
+          Las contraseñas no coinciden
+        </span>
+      </div>
+
+      <div class="password-requirements">
+        <p><mat-icon class="info-icon">info</mat-icon> La contraseña debe tener al menos 6 caracteres</p>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" (click)="closeChangePasswordModal()" class="btn-secondary">Cancelar</button>
+        <button type="submit" [disabled]="changePasswordForm.invalid" class="btn-primary">Cambiar Contraseña</button>
       </div>
     </form>
   </div>

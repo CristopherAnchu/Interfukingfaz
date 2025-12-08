@@ -130,6 +130,34 @@
   color: #d32f2f;
 }
 
+.btn-change-password {
+  margin: 1.5rem auto 2rem auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(211, 47, 47, 0.2);
+}
+
+.btn-change-password:hover {
+  background: #b71c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
+}
+
+.btn-change-password mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
 .user-stats {
   display: flex;
   justify-content: center;
@@ -862,6 +890,74 @@
 
 .lang-dropdown button:last-child {
   border-radius: 0 0 4px 4px;
+}
+
+/* Change Password Modal Styles */
+.password-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-group input {
+  flex: 1;
+  padding-right: 45px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 5px;
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.toggle-password-btn:hover {
+  background: #f0f0f0;
+}
+
+.toggle-password-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.error-text {
+  display: block;
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.password-requirements {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.password-requirements p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1565c0;
+  font-size: 0.9rem;
+}
+
+.info-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #2196f3;
 }
 
 .lang-dropdown button:hover {
