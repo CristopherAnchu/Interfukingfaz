@@ -75,7 +75,7 @@
     </div>
 
     <div class="projects-grid" *ngIf="userProjects.length > 0">
-      <div *ngFor="let project of userProjects" class="project-card" (click)="selectProject(project)">
+      <div *ngFor="let project of userProjects" class="project-card">
         <div class="project-header">
           <h4>{{ project.nombre }}</h4>
           <span class="project-status" [class]="project.estado">{{ project.estado }}</span>
@@ -90,6 +90,10 @@
             <mat-icon>folder</mat-icon>
             <span>{{ project.documentos.length }} documentos</span>
           </div>
+        </div>
+        <div class="project-actions">
+          <button class="btn-primary" (click)="selectProject(project)">Abrir</button>
+          <button class="btn-secondary" (click)="goToVersion(project)">Versionar</button>
         </div>
         <div class="project-tags">
           <span *ngFor="let tag of project.etiquetas" class="tag">{{ tag }}</span>

@@ -1,0 +1,53 @@
+<div class="version-container">
+  <header class="version-header">
+    <button class="back-btn" (click)="back()">
+      <mat-icon>arrow_back</mat-icon> Volver
+    </button>
+    <h1>Versionado de Proyecto</h1>
+  </header>
+
+  <section class="project-info" *ngIf="project">
+    <div>
+      <label>Proyecto seleccionado</label>
+      <input type="text" [value]="project.nombre" readonly>
+    </div>
+    <div>
+      <label>Número de versión</label>
+      <input type="text" [value]="nextVersion" readonly>
+    </div>
+  </section>
+
+  <form class="version-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-group">
+      <label>Descripción de cambios realizados</label>
+      <textarea rows="4" formControlName="description" placeholder="Resumen breve de los cambios"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Archivo actualizado</label>
+      <input type="file" (change)="onFileSelected($event)">
+      <small *ngIf="form.value.file">Seleccionado: {{ form.value.file }}</small>
+    </div>
+
+    <div class="form-group">
+      <label>Notas para revisores</label>
+      <textarea rows="3" formControlName="notes" placeholder="Notas opcionales"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="primary" type="submit" [disabled]="form.invalid">Guardar versión</button>
+    </div>
+  </form>
+
+  <aside class="metrics">
+    <h3>Usabilidad y métricas (objetivos)</h3>
+    <ul>
+      <li>Eficacia: versiones guardadas correctamente ≥ 98 %</li>
+      <li>Eficiencia: actualización ≤ 1 minuto</li>
+      <li>Satisfacción: control del historial ≥ 4.5/5</li>
+    </ul>
+    <p class="note">Nota: Esta es una versión de avance para presentación.</p>
+  </aside>
+
+  <div *ngIf="message" class="message" [ngClass]="messageType">{{ message }}</div>
+</div>

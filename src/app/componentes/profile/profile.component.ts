@@ -155,6 +155,10 @@ export class ProfileComponent implements OnInit {
     this.activeTab = 'projects';
   }
 
+  public goToVersion(project: Project): void {
+    this.router.navigate(['/project-version', project.id]);
+  }
+
   public openCreateProjectModal(): void {
     this.showCreateProjectModal = true;
   }

@@ -10,6 +10,7 @@ import { ProfileComponent } from './componentes/profile/profile.component';
 import { PasswordRecoveryComponent } from './componentes/password-recovery/password-recovery.component';
 import { TermsComponent } from './componentes/terms/terms.component';
 import { PrivacyComponent } from './componentes/privacy/privacy.component';
+import { ProjectVersionComponent } from './componentes/project-version/project-version.component';
 
 //Importaciones de los guards
 import { adminGuard } from './guards/admin.guard';
@@ -25,5 +26,6 @@ export const routes: Routes = [
     {path: "admin", component: AdminComponent, canActivate:[loginGuard, adminGuard]},
     {path: "feed", component: FeedComponent, canActivate:[loginGuard]},
     {path: "profile", component: ProfileComponent, canActivate:[loginGuard]},
+    {path: "project-version/:id", component: ProjectVersionComponent, canActivate:[loginGuard]},
     {path: "**", redirectTo: "login"},
 ];
