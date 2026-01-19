@@ -433,49 +433,82 @@
     </div>
 
     <div *ngIf="selectedDocument" class="modal-body">
+      <!-- Encabezado del Documento -->
       <div class="document-detail-section">
         <div class="detail-icon">
           <mat-icon>{{ getFileIcon(selectedDocument.fileType) }}</mat-icon>
         </div>
         <h3>{{ selectedDocument.fileName }}</h3>
+        <p class="file-type-small">{{ selectedDocument.fileType }}</p>
       </div>
 
-      <div class="detail-grid">
-        <div class="detail-item">
-          <label>Número de Documento:</label>
-          <p>{{ selectedDocument.numero }}</p>
+      <!-- Sección Información Principal -->
+      <div class="detail-section">
+        <h4 class="section-title">Información del Documento</h4>
+        <div class="detail-row">
+          <div class="detail-col">
+            <label>Número:</label>
+            <p>{{ selectedDocument.numero }}</p>
+          </div>
+          <div class="detail-col">
+            <label>Tipo:</label>
+            <p>{{ selectedDocument.tipo }}</p>
+          </div>
         </div>
-        <div class="detail-item">
-          <label>Tipo de Documento:</label>
-          <p>{{ selectedDocument.tipo }}</p>
+        <div class="detail-row full">
+          <div class="detail-col">
+            <label>Asunto:</label>
+            <p>{{ selectedDocument.asunto }}</p>
+          </div>
         </div>
-        <div class="detail-item">
-          <label>Asunto:</label>
-          <p>{{ selectedDocument.asunto }}</p>
-        </div>
-        <div class="detail-item full-width">
-          <label>Descripción:</label>
+      </div>
+
+      <!-- Sección Descripción -->
+      <div class="detail-section">
+        <h4 class="section-title">Descripción</h4>
+        <div class="detail-box">
           <p>{{ selectedDocument.descripcion }}</p>
         </div>
-        <div class="detail-item">
-          <label>Quien Subió:</label>
-          <p>{{ selectedDocument.quienSube }}</p>
+      </div>
+
+      <!-- Sección Información de Distribución -->
+      <div class="detail-section">
+        <h4 class="section-title">Distribución</h4>
+        <div class="detail-row">
+          <div class="detail-col">
+            <label>Subido Por:</label>
+            <p class="author-info">{{ selectedDocument.quienSube }}</p>
+          </div>
+          <div class="detail-col">
+            <label>Destinatario:</label>
+            <p class="recipient-info">{{ selectedDocument.paraQuienEs }}</p>
+          </div>
         </div>
-        <div class="detail-item">
-          <label>Para:</label>
-          <p>{{ selectedDocument.paraQuienEs }}</p>
+      </div>
+
+      <!-- Sección Metadatos -->
+      <div class="detail-section">
+        <h4 class="section-title">Metadatos</h4>
+        <div class="detail-row">
+          <div class="detail-col">
+            <label>Fecha de Subida:</label>
+            <p><mat-icon class="inline-icon">event</mat-icon>{{ selectedDocument.fechaSubida }}</p>
+          </div>
         </div>
-        <div class="detail-item">
-          <label>Fecha de Subida:</label>
-          <p>{{ selectedDocument.fechaSubida }}</p>
-        </div>
-        <div class="detail-item">
-          <label>Tipo de Archivo:</label>
-          <p>{{ selectedDocument.fileType }}</p>
-        </div>
-        <div class="detail-item full-width">
-          <label>Etiquetas:</label>
-          <p>{{ selectedDocument.etiquetas || 'N/A' }}</p>
+        <div class="detail-row full">
+          <div class="detail-col">
+            <label>Etiquetas:</label>
+            <div class="tags-container">
+              <span *ngIf="selectedDocument.etiquetas && selectedDocument.etiquetas.length > 0" 
+                    *ngFor="let tag of selectedDocument.etiquetas.split(',')" 
+                    class="tag-badge">
+                {{ tag.trim() }}
+              </span>
+              <span *ngIf="!selectedDocument.etiquetas || selectedDocument.etiquetas.length === 0" class="no-tags">
+                Sin etiquetas
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

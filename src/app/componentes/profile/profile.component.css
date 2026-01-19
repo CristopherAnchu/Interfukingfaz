@@ -1105,6 +1105,118 @@
   word-break: break-word;
 }
 
+.file-type-small {
+  margin: 5px 0 0 0;
+  font-size: 0.85rem;
+  color: #999;
+  text-transform: uppercase;
+}
+
+/* Secciones de Detalles */
+.detail-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.detail-section:last-of-type {
+  border-bottom: none;
+}
+
+.section-title {
+  margin: 0 0 15px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d32f2f;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.detail-row.full {
+  grid-template-columns: 1fr;
+}
+
+.detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-col label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.85rem;
+}
+
+.detail-col p {
+  margin: 0;
+  color: #333;
+  font-size: 0.95rem;
+  padding: 10px 12px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  border-left: 3px solid #d32f2f;
+}
+
+.detail-box {
+  background-color: #f8f8f8;
+  border-left: 3px solid #d32f2f;
+  padding: 15px;
+  border-radius: 5px;
+  line-height: 1.6;
+}
+
+.detail-box p {
+  margin: 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.author-info,
+.recipient-info {
+  font-weight: 500;
+  color: #d32f2f;
+}
+
+.inline-icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 5px;
+  vertical-align: middle;
+  color: #d32f2f;
+}
+
+/* Tags */
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-badge {
+  display: inline-block;
+  background-color: #d32f2f;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.no-tags {
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1187,6 +1299,14 @@
   .modal-content.document-modal {
     max-width: 95%;
     width: 95%;
+  }
+
+  .detail-row {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-row.full {
+    grid-template-columns: 1fr;
   }
 
   .detail-grid {
