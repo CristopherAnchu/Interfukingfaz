@@ -499,11 +499,11 @@
           <div class="detail-col">
             <label>Etiquetas:</label>
             <div class="tags-container">
-              <span *ngIf="selectedDocument.etiquetas && selectedDocument.etiquetas.length > 0" 
-                    *ngFor="let tag of selectedDocument.etiquetas.split(',')" 
-                    class="tag-badge">
-                {{ tag.trim() }}
-              </span>
+              <ng-container *ngIf="selectedDocument.etiquetas && selectedDocument.etiquetas.length > 0">
+                <span *ngFor="let tag of selectedDocument.etiquetas.split(',')" class="tag-badge">
+                  {{ tag.trim() }}
+                </span>
+              </ng-container>
               <span *ngIf="!selectedDocument.etiquetas || selectedDocument.etiquetas.length === 0" class="no-tags">
                 Sin etiquetas
               </span>
