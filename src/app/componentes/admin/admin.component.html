@@ -125,7 +125,7 @@
     <!-- Modal de Edición de Usuario -->
     <div class="modal-overlay" *ngIf="isEditModalOpen" (click)="closeEditModal()">
         <div class="modal-content" (click)="$event.stopPropagation()">
-            <div class="modal-header">
+            <div class="modal-header flex flex-row justify-between">
                 <h2>Editar Usuario</h2>
                 <button class="close-btn" (click)="closeEditModal()">
                     <mat-icon>close</mat-icon>

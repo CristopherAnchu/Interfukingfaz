@@ -380,6 +380,8 @@ table td button {
   cursor: pointer;
   color: #999;
   padding: 0;
+  width: auto;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
