@@ -356,7 +356,8 @@ export class ProfileComponent implements OnInit {
     return 'insert_drive_file';
   }
 
-  public downloadDocument(doc: DocumentsInterface): void {
+  public downloadDocument(doc: DocumentsInterface | null): void {
+    if (!doc) return;
     const blob = new Blob([`Contenido simulado del archivo ${doc.fileName}`], { type: doc.fileType });
     const url = URL.createObjectURL(blob);
 
