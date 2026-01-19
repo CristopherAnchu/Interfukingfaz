@@ -26,6 +26,8 @@ export class ProfileComponent implements OnInit {
   userProjects: Project[] = [];
   selectedProject: Project | null = null;
   projectDocuments: DocumentsInterface[] = [];
+  selectedDocument: DocumentsInterface | null = null;
+  showDocumentModal = false;
   
   activeTab: 'projects' | 'documents' = 'projects';
   showCreateProjectModal = false;
@@ -418,6 +420,17 @@ export class ProfileComponent implements OnInit {
 
   public logout(): void {
     this.authService.logout();
+  }
+
+  // Métodos para modal de documento
+  public openDocumentModal(document: DocumentsInterface): void {
+    this.selectedDocument = document;
+    this.showDocumentModal = true;
+  }
+
+  public closeDocumentModal(): void {
+    this.showDocumentModal = false;
+    this.selectedDocument = null;
   }
 
   // Métodos para cambio de idioma

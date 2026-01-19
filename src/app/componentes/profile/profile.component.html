@@ -155,7 +155,7 @@
         </div>
 
         <div class="documents-grid" *ngIf="projectDocuments.length > 0">
-          <div *ngFor="let doc of projectDocuments" class="document-card">
+          <div *ngFor="let doc of projectDocuments" class="document-card" (click)="openDocumentModal(doc)">
             <div class="document-icon">
               <mat-icon>{{ getFileIcon(doc.fileType) }}</mat-icon>
             </div>
@@ -164,7 +164,7 @@
               <p class="document-meta">{{ doc.asunto }}</p>
               <p class="document-date">{{ doc.fechaSubida }}</p>
             </div>
-            <button (click)="downloadDocument(doc)" class="icon-btn-small">
+            <button (click)="downloadDocument(doc); $event.stopPropagation()" class="icon-btn-small">
               <mat-icon>download</mat-icon>
             </button>
           </div>
@@ -420,5 +420,72 @@
         <button type="submit" [disabled]="changePasswordForm.invalid" class="btn-primary">Cambiar Contraseña</button>
       </div>
     </form>
+  </div>
+</div>
+<!-- Document Details Modal -->
+<div class="modal-overlay" *ngIf="showDocumentModal" (click)="closeDocumentModal()">
+  <div class="modal-content document-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Detalles del Documento</h2>
+      <button class="close-btn" (click)="closeDocumentModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div *ngIf="selectedDocument" class="modal-body">
+      <div class="document-detail-section">
+        <div class="detail-icon">
+          <mat-icon>{{ getFileIcon(selectedDocument.fileType) }}</mat-icon>
+        </div>
+        <h3>{{ selectedDocument.fileName }}</h3>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Número de Documento:</label>
+          <p>{{ selectedDocument.numero }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Tipo de Documento:</label>
+          <p>{{ selectedDocument.tipo }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Asunto:</label>
+          <p>{{ selectedDocument.asunto }}</p>
+        </div>
+        <div class="detail-item full-width">
+          <label>Descripción:</label>
+          <p>{{ selectedDocument.descripcion }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Quien Subió:</label>
+          <p>{{ selectedDocument.quienSube }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Para:</label>
+          <p>{{ selectedDocument.paraQuienEs }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Fecha de Subida:</label>
+          <p>{{ selectedDocument.fechaSubida }}</p>
+        </div>
+        <div class="detail-item">
+          <label>Tipo de Archivo:</label>
+          <p>{{ selectedDocument.fileType }}</p>
+        </div>
+        <div class="detail-item full-width">
+          <label>Etiquetas:</label>
+          <p>{{ selectedDocument.etiquetas || 'N/A' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button (click)="downloadDocument(selectedDocument)" class="btn-primary">
+        <mat-icon>download</mat-icon>
+        Descargar
+      </button>
+      <button (click)="closeDocumentModal()" class="btn-secondary">Cerrar</button>
+    </div>
   </div>
 </div>
