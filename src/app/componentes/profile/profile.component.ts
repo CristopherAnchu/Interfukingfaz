@@ -79,6 +79,7 @@ export class ProfileComponent implements OnInit {
       numero: ['', Validators.required],
       tipo: ['', Validators.required],
       asunto: ['', Validators.required],
+      descripcion: ['', Validators.required],
       file: [null, Validators.required],
       etiquetas: ['']
     });
@@ -309,6 +310,7 @@ export class ProfileComponent implements OnInit {
             numero: formData.numero,
             tipo: formData.tipo,
             asunto: formData.asunto,
+            descripcion: formData.descripcion,
             quienSube: `${this.currentUser!.nombre} ${this.currentUser!.apellido} (${this.currentUser!.email})`,
             quienSubeEmail: this.currentUser!.email,
             paraQuienEs: this.selectedProject!.nombre,

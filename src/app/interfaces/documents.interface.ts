@@ -4,6 +4,7 @@ export interface DocumentsInterface {
     numero: string
     tipo: string
     asunto: string
+    descripcion: string
     quienSube: string
     quienSubeEmail: string
     paraQuienEs: string
