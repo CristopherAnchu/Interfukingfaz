@@ -24,6 +24,7 @@ import { Users } from '../../interfaces/users.interface'
 export class AdminComponent {
   currentUser: UserSession | null = null
   addUserForm: FormGroup
+  editUserForm: FormGroup
   users: Users[] = []
   filteredUsers: Users[] = []
   searchTerm = ""
@@ -31,6 +32,8 @@ export class AdminComponent {
   isLanguageOpen = false
   currentLanguage: Language = 'es'
   messageType: "Success" | "Error" | "" = ""
+  isEditModalOpen = false
+  userToEdit: Users | null = null
 
   constructor(
     private fb: FormBuilder,
@@ -45,6 +48,14 @@ export class AdminComponent {
       fechaNacimiento: ["", [Validators.required]], //Aqui se hizo un cambio
       email: ["", [Validators.required, Validators.email]],
       password: ["", [Validators.required]]
+    });
+
+    this.editUserForm = this.fb.group({
+      nombres: ["", [Validators.required]],
+      apellidos: ["", [Validators.required]],
+      email: ["", [Validators.required, Validators.email]],
+      fechaNacimiento: ["", [Validators.required]],
+      password: [""]
     });
     
     // Suscribirse al cambio de idioma
@@ -129,7 +140,47 @@ export class AdminComponent {
   }
   
   public EditUser(user: Users): void {
-    alert(`Editar usuario: ${user.nombres} ${user.apellidos}`)
+    this.userToEdit = user
+    this.editUserForm.patchValue({
+      nombres: user.nombres,
+      apellidos: user.apellidos,
+      email: user.email,
+      fechaNacimiento: user.fechaNacimiento,
+      password: ""
+    })
+    this.isEditModalOpen = true
+  }
+
+  public closeEditModal(): void {
+    this.isEditModalOpen = false
+    this.userToEdit = null
+    this.editUserForm.reset()
+  }
+
+  public onSubmitEditUser(): void {
+    if (!this.userToEdit) return
+
+    if (this.editUserForm.valid) {
+      const formData = this.editUserForm.value
+      const result = this.userService.updateUser(
+        this.userToEdit.cedula,
+        formData.nombres,
+        formData.apellidos,
+        formData.email,
+        formData.fechaNacimiento,
+        formData.password || undefined
+      )
+
+      if (result.success) {
+        this.showMessage(result.message, "Success")
+        this.closeEditModal()
+        this.loadUsers()
+      } else {
+        this.showMessage(result.message, "Error")
+      }
+    } else {
+      this.showMessage("Todos los campos son obligatorios.", "Error")
+    }
   }
 
   public DeleteUser(user: Users): void {

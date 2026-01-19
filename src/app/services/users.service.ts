@@ -169,4 +169,49 @@ export class UsersService {
     return false
   }
 
+  //Funcion para actualizar los datos de un usuario
+  public updateUser(
+    cedula: string,
+    nombres: string,
+    apellidos: string,
+    email: string,
+    fechaNacimiento: string,
+    newPassword?: string
+  ): { success: boolean; message: string } {
+    const users = this.storage.getUsers()
+    const userIndex = users.findIndex((user) => user.cedula === cedula)
+
+    if (userIndex === -1) {
+      return { success: false, message: "Usuario no encontrado." }
+    }
+
+    const currentUser = users[userIndex]
+
+    // Validar email si cambió
+    if (email !== currentUser.email) {
+      if (!this.validationService.validateEmailUleam(email, cedula)) {
+        return { success: false, message: "Formato de correo electrónico inválido o no coincide con la cédula esperada." }
+      }
+      
+      if (users.some((user) => user.email === email)) {
+        return { success: false, message: "Ya existe un usuario con este correo electrónico." }
+      }
+    }
+
+    // Actualizar los datos del usuario
+    users[userIndex].nombres = nombres
+    users[userIndex].apellidos = apellidos
+    users[userIndex].email = email
+    users[userIndex].fechaNacimiento = fechaNacimiento
+
+    // Actualizar contraseña si se proporciona
+    if (newPassword) {
+      users[userIndex].password = newPassword
+    }
+
+    this.storage.setUsers(users)
+    console.log(`Usuario actualizado exitosamente: ${cedula}`)
+    return { success: true, message: "Usuario actualizado exitosamente." }
+  }
+
 }
